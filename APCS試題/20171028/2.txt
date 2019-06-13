@@ -1,0 +1,12 @@
+2
+aBBaaa
+1
+BaBaBB
+1
+aBBdaaa
+3
+DDaasAAbbCC
+2
+aafAXbbCDCCC
+3
+DDaaAAbbCC

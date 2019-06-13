@@ -1,0 +1,22 @@
+// 設計出處-演算筆記：http://www.csie.ntnu.edu.tw/~u91029/Tree.html#5
+// 掃文資訊參考：
+(1) DFS 直覺作法：
+    先把兩個點的高度升到一樣高
+    高度相同時檢查是不是到達同一個點(代表另個點會在他往根節點的路徑上)
+    假設不同，兩個點每次都往前走一步，在確認是不是遇到(都走到同一個節點)
+
+(2) Tarjar's algorithm(離線)
+    想法：用來求出所有點對的 LCA 。亦得求出部分點對的 LCA ，必須預先知道是哪些點對，排好順序以利實作。
+          運用 DFS 遍歷順序，配合 Disjoint-sets Forest ，把已經拜訪過的點，依照層級聚合起來，方便找到 LCA 。
+    複雜度：記憶體消耗在儲存所有的查詢，但複雜度與節點O(N+Q)
+
+(3) 倍增法(離線)
+    DFS的強化版本，查詢祖先時都是O(㏒N)
+    複雜度：記憶體消耗在建跳位表(類似SparseTable)，複雜度是O(N+N㏒N)
+
+(4) 將LCA轉為RMQ解
+    利用 DFS 遍歷整棵祖譜樹，把整個路徑上經過的點依序記錄起來，路徑上所有的點當作 zkw 的葉節點建整棵樹
+    查詢時需要先將兩個節點轉為路徑上的號碼(要注意查詢區間的左右邊界可能會相反)
+// https://blog.csdn.net/jarjingx/article/details/8183240
+// https://blog.csdn.net/qq_41357771/article/details/78919888
+// https://blog.csdn.net/txl199106/article/details/53998831
