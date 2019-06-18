@@ -36,16 +36,19 @@ int main(){
     long upper_cnt=0;
     int st, ed=lower_bound(num,num+N,nM)-num;
     for( st=0; st<N; st++){
+      // 小於猜測值的個數
       while(ed<N and num[ed]-num[st]<nM)  ed++;
       lower_cnt+=ed-1-st;
+      // 小於等於猜測值的個數
       while(ed<N and num[ed]-num[st]<=nM) ed++;
       upper_cnt+=ed-1-st;
+      // 猜測的差值存在
       IsIn|=num[ed-1]-num[st]==nM;
     }
+    // 猜測的差值存在且收斂於正確的位置
     if(IsIn and lower_cnt<Kcnt and Kcnt<=upper_cnt) break;
     (lower_cnt<Kcnt)? nL=nM+1: nR=nM;
   }
-  // 維持原本的合法性：右端點合法，左端點未知
   printf("%d\n",nM);
 }
 /*
