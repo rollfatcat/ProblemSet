@@ -14,10 +14,12 @@
  */
 #include<bits/stdc++.h>
 using namespace std;
-// 精準度最好預留一位，題目是對小數點第2位四捨五入，第3位會有影響性，所以最低的精準度要訂到e-4
-#define esp 1e-4
 
-int N, K, w[1000], v[1000];
+// 精準度最好預留一位，題目是對小數點第2位四捨五入，第3位會有影響性，所以最低的精準度要訂到e-4
+const double ESP=1e-4;
+int N, K;
+int w[1000];
+int v[1000];
 double val[1000], sum;
 bool test(double d){
   for(int i=0;i<N;i++)
@@ -26,29 +28,27 @@ bool test(double d){
   sum=0.0;
   for(int i=0;i<K;i++) //只要最大的前M個加總大於0即可
     sum+=val[N-1-i];
-  return sum>=0.0;
+  return sum>=-ESP;
 }
 int main(){
 
   for(int M;scanf("%d %d",&N,&M)==2;){
-    double maxD=0.0, minD=100000000.0, tmpD;
+    double maxD=0.0, minD=100000000.0, nowD;
     for(int i=0;i<N;i++){
       scanf("%d %d",&w[i],&v[i]);
-      tmpD=v[i], tmpD/=w[i];
-      if(tmpD>maxD) maxD=tmpD;
-      if(tmpD<minD) minD=tmpD;
+      nowD=v[i], nowD/=w[i];
+      maxD=max(maxD,nowD);
+      minD=min(minD,nowD);
     }
-
     while(M--){
       scanf("%d",&K);
       // 左右邊界一定是性價比最低和最高(快速收縮)
-      double l=minD, r=maxD, m;
-      while(r-l>=esp){
-        m=(l+r)/2;
-        if(test(m)) l=m;
-        else r=m;
+      double nL=minD, nR=maxD, nM;
+      while(nR-nL>ESP){
+        nM=(nL+nR)/2.0;
+        (test(nM))? nL=nM: nR=nM-ESP;
       }
-      printf("%.2lf\n",m);
+      printf("%.2lf\n",nL);
     }
   }
 }
