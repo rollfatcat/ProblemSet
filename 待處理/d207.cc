@@ -14,14 +14,12 @@ inline void ShowBoard(unsigned long s);
 inline long Status_Change(unsigned long s,short now_pos,short nxt_pos);
 
 int main(){
+  // === 初始盤面 ===
   unsigned long now_board=0;
   for(unsigned long i=0;i<16;i++)
     now_board|=i<<(i<<2);
-  
-  // now_board=1147797409030816545
   map<unsigned long,short> rec;
   rec[now_board]=0;
-
   queue<DATA> Q;
   Q.push(DATA(0,14,now_board));
   while(Q.empty()==0){
@@ -51,7 +49,20 @@ int main(){
         rec[now_board]=nowS.step+1;
     }
   }
-  printf("%lu\n",rec.size());
+  //=== 讀取輸入 ===
+  int caseT;
+  unsigned long x;
+  scanf("%d",&caseT);
+  while(caseT--){
+    for(int i=0;i<16;i++)
+      scanf("%lu",&x),
+      now_board|=x<<(i<<2);
+    if(rec.find(now_board)==rec.end()) 
+      puts("This puzzle is not solvable.");
+    else
+      printf("%d\n",rec[now_board]);
+  }
+
 }
 
 inline void ShowBoard(unsigned long s){ //輸出盤面
