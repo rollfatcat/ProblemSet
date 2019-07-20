@@ -11,7 +11,7 @@ int main(){
     while(caseT--){
         bool safe=true;
         int cnt=0;
-        for(char ch;(ch=getchar())=='Y' or ch=='N';safe&=(cnt>=0))
+        for(char ch;(ch=getchar_unlocked())=='Y' or ch=='N';safe&=(cnt>=0))
             (ch=='Y')?cnt++:cnt--;
         puts((safe and cnt==0)?"YES":"NO");
     }
