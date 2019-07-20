@@ -14,7 +14,7 @@ int main(){
     int N, M;
     cin>>M>>N;
 
-    map<string,int> memo;
+    unordered_map<string,int> memo; // 0.7s(map版本) / 0.2s(unordered_map版本) 
     int ans_cnt=0;
     int now_cnt=0;
     string color_now, color_ss[MAXM];
