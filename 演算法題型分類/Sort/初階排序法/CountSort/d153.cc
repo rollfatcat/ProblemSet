@@ -1,3 +1,7 @@
+/* #case=100, N=4e4
+ * 題目提到：参加测验的奶牛都会得到一个分数（从0到100的整数）
+ * 題目要求找到『中位數』
+ */
 #include<bits/stdc++.h>
 using namespace std;
 
