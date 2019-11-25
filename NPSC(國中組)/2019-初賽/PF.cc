@@ -14,7 +14,7 @@ int main(){
             num[nxt][0]=max(num[now][1],num[now][2])+x,
             num[nxt][1]=max(num[now][0],num[now][2])-x,
             num[nxt][2]=max(num[now][0],num[now][1]);
-        printf("%d\n",max(num[N&1][0],num[N&1][1]));
+        printf("%d\n",max(max(num[N&1][0],num[N&1][1]),num[N&1][2]));
     }
 }
 /*
