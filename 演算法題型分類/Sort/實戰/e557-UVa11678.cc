@@ -1,4 +1,4 @@
-// d478 的進階題
+// d478 的進階題: 題目說明兩個數列是經過排序,但不一定是由小到大,也可是大到小
 #include <bits/stdc++.h>
 using namespace std;
 
