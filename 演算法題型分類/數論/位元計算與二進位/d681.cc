@@ -1,3 +1,5 @@
+/* 題目的輸入格式較為麻煩, 需要注意
+ */
 #include<iostream>
 #include<sstream>
 using namespace std;
