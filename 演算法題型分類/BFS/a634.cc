@@ -1,46 +1,78 @@
-// 中等進階題, 讀取有點麻煩, 題目沒說但保證存在一條路徑從起點到終點
-// 展開BFS時,紀錄路徑, 字典序決定展開的順序
-#include<iostream>
-#include<cstring>
-#include<vector>
-#include<queue>
+#include<bits/stdc++.h>
 using namespace std;
 
-struct Edge{ int x, y, d; string ss; } ed, now, nxt;
-int main(){
-  int dx[8]={-2,-2,-1,-1, 1, 1, 2, 2};
-  int dy[8]={-1, 1,-2, 2,-2, 2,-1, 1};
-  string pos_x="abcdefgh", pos_y="12345678";
+int dis[8][8];
+const int INF=1<<30;
+struct NODE{
+	int x, y, d;
+	string ss;
+	NODE(int x=0,int y=0,int d=0,string ss=""):x(x),y(y),d(d),ss(ss){}
+} ;
 
-  for(string ss; cin>>ss;){
-    int dis[8][8];
-    memset(dis,0x7f,sizeof(dis));
-    vector<string> ans;
-    queue<Edge> Q;
-    Q.push( {ss[0]-'a',ss[1]-'1',0,ss} );
-    // 讀取終點
-    cin>>ss;
-    ed.x=ss[0]-'a', ed.y=ss[1]-'1', ed.d=0x7fffffff;
-    // 讀取路障, 路障道起點的距離設定為-1代表無法被更新
-    while(cin>>ss and ss!="xx")
-      dis[ss[0]-'a'][ss[1]-'1']=-1;
-    // BFS
-    while(!Q.empty()){
-      now=Q.front();  Q.pop();
-      // 現在的點到起點的距離一樣時一樣要更新
-      if(dis[now.x][now.y]<now.d) continue;
-      dis[now.x][now.y]=now.d;
-      if(dis[ed.x][ed.y]<now.d) break;
-      else if(dis[ed.x][ed.y]==now.d and now.x==ed.x and now.y==ed.y){ ans.push_back(now.ss); continue; }
-      nxt.d=now.d+1;
-      for(int i=0;i<8;i++){
-        nxt.x=now.x+dx[i], nxt.y=now.y+dy[i];
-        if(0<=nxt.x and nxt.x<8 and 0<=nxt.y and nxt.y<8 and dis[nxt.x][nxt.y]>nxt.d)
-          nxt.ss=now.ss+' '+pos_x[nxt.x]+pos_y[nxt.y],  Q.push(nxt);
-      }
-    }
-    cout<<"The shortest solution is "<<dis[ed.x][ed.y]<<" move(s)."<<endl;
-    for(int i=0;i<ans.size();i++)
-      cout<<"Solution: "<<ans[i]<<endl;
-  }
+int main(){
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	
+	string ss;
+	string s1="87654321", s2="abcdefgh";
+	while(cin>>ss){
+		NODE st=NODE('8'-ss[1],ss[0]-'a',0,ss);
+		cin>>ss;
+		NODE ed=NODE('8'-ss[1],ss[0]-'a');
+		/* BFS 的特性：第一次走到該格子代表從起點到這一格即是最短距離
+     * 設定每一格為『走不到』的狀態：距離＝INF
+     * 障礙物：距離＝0代表無法更新
+     */
+		for(int i=0;i<8;i++)
+			for(int j=0;j<8;j++)
+				dis[i][j]=INF;
+		while(cin>>ss and ss[0]!='x')
+			dis['8'-ss[1]][ss[0]-'a']=0;
+    /* BFS：求起點到終點的『所有』『最短』『路徑』
+     * 抵達同一格時可能存在不同路徑，所以不能因為走過而捨棄掉這格往周圍展開
+     * 判斷方式需要改為：當現在距離>目前這格紀錄的最短路徑時則 pass，代表一定有繞遠路
+     * 對於終點則是『更新第一次』時需要印出『最少步數』
+     *           『現在的步數＝最少步數』時則印出路徑後 pass(不需要再展開)
+     */
+		queue<NODE> Q;
+		for(Q.push(st);Q.empty()==0;Q.pop()){
+			NODE now=Q.front();
+			if(now.d>dis[ed.x][ed.y]) break;
+			if(now.x==ed.x and now.y==ed.y){
+				if(dis[ed.x][ed.y]>now.d)
+					dis[ed.x][ed.y]=now.d,
+					cout<<"The shortest solution is "<<now.d<<" move(s)."<<'\n';
+				if(dis[ed.x][ed.y]==now.d)
+					cout<<"Solution: "<<now.ss<<'\n';
+        continue;
+			}
+			if(now.d>dis[now.x][now.y]) continue;
+			dis[now.x][now.y]=now.d;
+			if(now.y>1){
+				if(now.x<7 and dis[now.x+1][now.y-2]>now.d)
+					Q.push(NODE(now.x+1,now.y-2,now.d+1,now.ss+' '+s2[now.y-2]+s1[now.x+1]));
+				if(now.x>0 and dis[now.x-1][now.y-2]>now.d)
+					Q.push(NODE(now.x-1,now.y-2,now.d+1,now.ss+' '+s2[now.y-2]+s1[now.x-1]));
+			}
+			if(now.y>0){
+				if(now.x<6 and dis[now.x+2][now.y-1]>now.d)
+					Q.push(NODE(now.x+2,now.y-1,now.d+1,now.ss+' '+s2[now.y-1]+s1[now.x+2]));
+				if(now.x>1 and dis[now.x-2][now.y-1]>now.d)
+					Q.push(NODE(now.x-2,now.y-1,now.d+1,now.ss+' '+s2[now.y-1]+s1[now.x-2]));
+			}
+			if(now.y<7){
+				if(now.x<6 and dis[now.x+2][now.y+1]>now.d)
+					Q.push(NODE(now.x+2,now.y+1,now.d+1,now.ss+' '+s2[now.y+1]+s1[now.x+2]));
+				if(now.x>1 and dis[now.x-2][now.y+1]>now.d)
+					Q.push(NODE(now.x-2,now.y+1,now.d+1,now.ss+' '+s2[now.y+1]+s1[now.x-2]));
+			}
+			if(now.y<6){
+				if(now.x<7 and dis[now.x+1][now.y+2]>now.d)
+					Q.push(NODE(now.x+1,now.y+2,now.d+1,now.ss+' '+s2[now.y+2]+s1[now.x+1]));
+				if(now.x>0 and dis[now.x-1][now.y+2]>now.d)
+					Q.push(NODE(now.x-1,now.y+2,now.d+1,now.ss+' '+s2[now.y+2]+s1[now.x-1]));
+			}
+		}
+		
+	}
 }
