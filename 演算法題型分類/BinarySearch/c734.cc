@@ -1,4 +1,6 @@
-//  數論抓規則，用二分搜尋找範圍
+/* 前置題：e995 
+ * 數論抓規則，用二分搜尋找範圍
+ */
 #include<iostream>
 #include<vector>
 using namespace std;
