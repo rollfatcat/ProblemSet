@@ -1,25 +1,22 @@
-// 詢問N顆骰子出現點數總和是M的方法數，N<=20方法數可以用long紀錄就好
-#include<iostream>
-#include<vector>
+/* 狀態轉移：
+ * 只有當Ｎ顆骰子可以組合出來的點數透過新增一顆骰子的點數(１-６)才能
+ */
+#include<bits/stdc++.h>
 using namespace std;
 
-int main(){
-  vector<long> DP[21];
-  DP[1].push_back(0);
-  for(int i=1;i<=6;i++)
-    DP[1].push_back(1);
-  for(int idx=2,nowPoint,prePoint=6; idx<=20; idx++){
-    nowPoint=(idx<<2)+(idx<<1);
-    DP[idx].assign(nowPoint+1,0);
-    for(int i=1;i<=6;i++)
-      for(int j=idx-1;j<=prePoint;j++)
-        DP[idx][j+i]+=DP[idx-1][j];
-    prePoint=nowPoint;
-  }
-  ios::sync_with_stdio(0),
-  cin.tie(0), cout.tie(0);
+const int MaxK=1e3;
+const int MaxN=20;
+long cnt[MaxN+1][MaxN*6+1]={};
 
-  int T,n,m;
-  for(cin>>T; T--; )
-    cin>>n>>m, cout<<DP[n][m]<<endl;
+int main(){
+	cnt[0][0]=1;
+	for(int DiceCnt=1;DiceCnt<=MaxN;DiceCnt++)
+		for(int Point=DiceCnt-1;Point<=6*DiceCnt;Point++)
+			for(int addv=1;addv<=6;addv++)
+				cnt[DiceCnt][Point+addv]+=cnt[DiceCnt-1][Point];
+	int CaseT, DiceCnt, Point;
+	scanf("%d\n",&CaseT);
+	while(CaseT--)
+		scanf("%d %d\n",&DiceCnt,&Point),
+		printf("%ld\n",cnt[DiceCnt][Point]);
 }

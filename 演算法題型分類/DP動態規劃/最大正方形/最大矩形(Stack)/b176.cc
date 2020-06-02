@@ -1,56 +1,44 @@
-// 找出最大『嚴格遞增的』矩形面積 O(n^4)
-// 枚舉方式的做法類似 b123 的最大矩形，只是需要再處理『直行』的遞增要求
+/* 給定二維的地圖，最大化矩形面積。
+ * 該矩形內的數字皆符合『嚴格遞減』(上方/左方的數字必須小於目前的數字)
+ * 類似題：UVa-12192：給定二維矩陣和上下限的數字，最大化正方形邊長
+ * 		該正方形內的數字皆落在範圍內。
+ */
 #include<bits/stdc++.h>
 using namespace std;
 
-const short MAXN=100;
-int org[MAXN][MAXN];
-int contR[MAXN][MAXN];
-int contC[MAXN][MAXN];
-
+const int MaxN=1e2;
+const int MaxV=1e9;
+int org [MaxN][MaxN];
+int conR[MaxN][MaxN]; // 同一個 Row 連續小於的個數
+int conC[MaxN][MaxN]; // 同一個 Col 連續小於的個數
 int main(){
-  int R, C;
-  scanf("%d %d",&R,&C);
-  for(int i=0;i<R;i++)
-    for(int j=0;j<C;j++)
-      scanf("%d",&org[i][j]);
-  //DP ----------------
-	for(int i=0;i<C;i++){
-		contR[0][i]=1 ;
-		for(int j=1;j<R;j++)
-			contR[j][i]=(org[j][i]>org[j-1][i])?(contR[j-1][i]+1):1;
-	}
-	for(int i=0;i<R;i++){
-		contC[i][0]=0;
-		for(int j=1;j<C;j++)
-		  contC[i][j]=contC[i][j-1]+(org[i][j]<=org[i][j-1]);
-	}
-  int ans=0;
-  /* 枚舉每一個 Row，
-   * 再枚舉起點和終點，當起點和終點都屬於同一個嚴格遞增序列才做矩形判定
-   * (1) 找出這段區間中最短的 Row 高度代表這個區段內以 Row 為單位維持嚴格遞增的性質
-   * (2) 以最短高度為上限，往上檢查同樣區段內的左右點是不是也屬於同一個區段
-   */
-	for(int i=0;i<R;i++){
-		for(int nL=0;nL<C;nL++){
-			for(int nR=nL;nR<C and contC[i][nL]==contC[i][nR];nR++){
-				// 這個區間中『直行』『嚴格遞增』的最短高度
-				int minh=contR[i][nL];
-				for(int k=nL+1;k<=nR;k++)
-				  minh=min(minh,contR[i][k]);
-				// 枚舉每個高度並往上檢驗落在同個區間內的左右點是不是也屬於同個嚴格遞增數列
-				// 挑戰失敗就跳開，並記錄挑戰成功的最佳紀錄
-				for(int k=1;k<=minh;k++){
-					if(contC[i-k+1][nL]!=contC[i-k+1][nR]){
-						minh=k-1 ;
-						break ;
-					}
-				}
-				ans=max(ans,minh*(nR-nL+1));
-			}
+	/* 測資讀取並且計算連續性的累加
+	 */
+	int R, C;
+	scanf("%d %d\n",&R,&C);
+	for(int i=0;i<R;i++)
+		for(int j=0;j<C;j++){
+			scanf("%d",&org[i][j]);
+			conC[i][j]=(i==0 or org[i-1][j]>=org[i][j])? 1: conC[i-1][j]+1;
+			conR[i][j]=(j==0 or org[i][j-1]>=org[i][j])? 1: conR[i][j-1]+1;
 		}
-	}
-	printf("%d\n",ans);
+	/* 左上到右下枚舉每個格子(雙層迴圈)
+	 * 以目前這個格子為右下角往左和往上延伸，計算可以形成的矩形
+	 * 該格子 Col 的連續性 往左更新直到小於等於目前的高度
+	 * 模仿 Stack：目前指標指到的格子，該格子的高度(Col連續性)是否＝目前假設的高度
+	 * 當高度＝１時，矩形面積＝目前的格子往左 Row 的連續性
+	 * 當高度＝２時，指標右移直到指的格子，該格子的高度(Col連續性)＝目前假設的高度 且 該格落在往左的寬度
+	 */
+	int maxRec=0, w;
+	for(int i=0;i<R;i++)
+		for(int j=0;j<C;j++){
+			for(int k=j-1;k>=0 and conC[i][k]>conC[i][j];k--) 
+				conC[i][k]=conC[i][j];
+			w=conR[i][j], maxRec=max(maxRec,w);
+			for(int H=2;H<=conC[i][j];maxRec=max(maxRec,H*w),H++)
+				for(w=min(w,conR[i-H+1][j]);w>0 and conC[i][j-w+1]<H;w--);
+		}
+	printf("%d\n",maxRec);
 }
 /*
 5 5

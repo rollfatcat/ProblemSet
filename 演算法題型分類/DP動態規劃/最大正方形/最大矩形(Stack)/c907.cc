@@ -1,39 +1,28 @@
-// Histogram找到最大矩形面積
-
-#include<iostream>
-#include<stack>
+/* Histogram找到最大矩形面積，可類推到『尋找最大矩陣』
+ * http://www.csie.ntnu.edu.tw/~u91029/MaximumSubarray.html#2
+ */
+#include<bits/stdc++.h>
 using namespace std;
 
-struct nn{ int h, x; };
-int main(){
-  ios::sync_with_stdio(0),
-  cin.tie(0), cout.tie(0);
+const int MaxN=1e4;
+int hgt[MaxN];
 
-  int N;  cin>>N;
-  stack<nn> S;
-  int maxArea=0, tmpArea, now_h;
-  for(int x=1; x<=N; x++){
-    cin>>now_h;
-    while(!S.empty() and S.top().h>now_h){
-      tmpArea=S.top().h*(x-S.top().x);
-      maxArea=max(maxArea,tmpArea);
-      S.pop();
-    }
-    for(int h=(S.empty())?1:(S.top().h+1); h<=now_h; h++)
-      S.push({h,x});
-  }
-  while(!S.empty()){
-    tmpArea=S.top().h*(N+1-S.top().x);
-    maxArea=max(maxArea,tmpArea);
-    S.pop();
-  }
-  cout<<maxArea<<endl;
+int main(){
+	for(int C;scanf("%d\n",&C)!=EOF;){
+		for(int i=0;i<C;i++)
+			scanf("%d",&hgt[i]);
+		
+		int maxRec=0, prev;
+		stack<int> S;
+		for(int j=0;j<C;j++){
+			for(prev=j;S.empty()==0 and hgt[S.top()]>hgt[j];S.pop())
+				prev=S.top(),
+				maxRec=max(maxRec,hgt[S.top()]*(j-prev));
+			S.push(prev);
+			hgt[prev]=hgt[j];
+		}
+		for(;S.empty()==0 and hgt[S.top()]>0;S.pop())
+			maxRec=max(maxRec,hgt[S.top()]*(C-S.top()));
+		printf("%d\n",maxRec);
+	}
 }
-/*
-5
-5
-4
-5
-5
-3
-*/
