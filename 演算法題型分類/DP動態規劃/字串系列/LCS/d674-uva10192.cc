@@ -1,19 +1,31 @@
-// 字串含空白字元, 得用 getline() 不可用cin
-#include<iostream>
-#include<cstring>
+/* 輸入的字串包含空白字元, 需使用 getline() 讀取
+ */
+#include<bits/stdc++.h>
 using namespace std;
-#define MaxN 101
 
-int main(){
-  int cnt[MaxN][MaxN];
-  string s1, s2;
+const long MaxL=100;
+string ss[2];
+int dpv[MaxL][MaxL];
 
-  for(int caseNum=1;getline(cin,s1) and s1!="#";caseNum++){
-    getline(cin,s2);
-    memset(cnt,0,sizeof(cnt));
-    for(int i=0;i<s1.length();i++)
-      for(int j=0;j<s2.length();j++)
-        cnt[i+1][j+1]=(s1[i]==s2[j])?(cnt[i][j]+1):max(cnt[i+1][j],cnt[i][j+1]);
-    cout<<"Case #"<<caseNum<<": you can visit at most "<<cnt[s1.length()][s2.length()]<<" cities.\n";
-  }
+inline int LCS(int L1,int L2){
+	if(L1<0 or L2<0) return 0;
+	if(dpv[L1][L2]==-1)
+		dpv[L1][L2]=(ss[0][L1]==ss[1][L2])? LCS(L1-1,L2-1)+1:max(LCS(L1-1,L2),LCS(L1,L2-1));
+	return dpv[L1][L2];
 }
+int main(){
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	
+	int caseI=1;
+	while(getline(cin,ss[0]) and ss[0][0]!='#'){
+		getline(cin,ss[1]);
+		for(int i=0;i<ss[0].length();i++)
+			for(int j=0;j<ss[1].length();j++)
+				dpv[i][j]=-1;
+		cout<<"Case #"<<caseI++<<" you can visit at most "<<LCS(ss[0].length()-1,ss[1].length()-1)<<" cities.\n";
+	}
+}
+
+
+

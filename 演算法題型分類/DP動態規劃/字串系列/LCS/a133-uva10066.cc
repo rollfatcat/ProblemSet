@@ -1,21 +1,20 @@
-//給兩個數列 找最常共同子數列
-#include<iostream>
-#include<cstring>
+#include<bits/stdc++.h>
 using namespace std;
-#define MaxN 101
+
+const int MaxN=100+1;
+int dpv[MaxN][MaxN]={};
+int org[2][MaxN];
 
 int main(){
-  int cnt[MaxN][MaxN];
-  int alen, blen;
-  int a[MaxN],  b[MaxN];
-
-  for(int caseNum=1;cin>>alen>>blen and alen;caseNum++){
-    for(int i=0;i<alen;i++) cin>>a[i];
-    for(int i=0;i<blen;i++) cin>>b[i];
-    memset(cnt,0,sizeof(cnt));
-    for(int i=0;i<alen;i++)
-      for(int j=0;j<blen;j++)
-        cnt[i+1][j+1]=(a[i]==b[j])?(cnt[i][j]+1):max(cnt[i+1][j],cnt[i][j+1]);
-    cout<<"Twin Towers #"<<caseNum<<"\nNumber of Tiles : "<<cnt[alen][blen]<<"\n";
+	int caseI=1, A, B;
+  while(scanf("%d %d\n",&A,&B)!=EOF and A){
+    for(int i=1;i<=A;i++) 
+    	scanf("%d",&org[0][i]);
+    for(int i=1;i<=B;i++) 
+    	scanf("%d",&org[1][i]);
+    for(int i=1;i<=A;i++)
+      for(int j=1;j<=B;j++)
+        dpv[i][j]=(org[0][i]==org[1][j])? dpv[i-1][j-1]+1:max(dpv[i-1][j],dpv[i][j-1]);
+    printf("Twin Towers #%d\nNumber of Tiles : %d\n",caseI++,dpv[A][B]);
   }
 }

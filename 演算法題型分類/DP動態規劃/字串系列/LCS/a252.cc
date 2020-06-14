@@ -1,21 +1,21 @@
-// 最長共同字串(3維版本) => 完成後請挑戰 ZJ-b953 並比較 ZJ-b954
-#include<iostream>
-#include<cstring>
-#include<cmath>
+/* 最長共同字串(3維版本)，概念和２維版本相同
+ */
+#include<bits/stdc++.h>
 using namespace std;
 
-int main(){
-  string ss[3];
-  cin>>ss[0]>>ss[1]>>ss[2];
-  int map[ss[0].length()+1][ss[1].length()+1][ss[2].length()+1];
-  memset(map,0,sizeof(map));
+const int MaxN=100+1;
+int dpv[MaxN][MaxN][MaxN]={};
+char ss[3][MaxN];
 
-  for(int i=0;i<ss[0].length();i++)
-    for(int j=0;j<ss[1].length();j++)
-      for(int k=0;k<ss[2].length();k++)
-        if(ss[0][i]==ss[1][j] and ss[1][j]==ss[2][k])
-          map[i+1][j+1][k+1]=map[i][j][k]+1;
-        else
-          map[i+1][j+1][k+1]=max(max(map[i][j+1][k+1],map[i+1][j][k+1]),map[i+1][j+1][k]);
-  cout<<map[ss[0].length()][ss[1].length()][ss[2].length()]<<endl;
+int main(){
+	int x, y, z;
+	
+	scanf("%s\n%s\n%s\n",ss[0],ss[1],ss[2]);
+	for(x=0;x<strlen(ss[0]);x++)
+		for(y=0;y<strlen(ss[1]);y++)
+			for(z=0;z<strlen(ss[2]);z++)
+				dpv[x+1][y+1][z+1]=(ss[0][x]==ss[1][y] and ss[1][y]==ss[2][z])?
+				  dpv[x][y][z]+1: 
+				  max(dpv[x][y+1][z+1],max(dpv[x+1][y][z+1],dpv[x+1][y+1][z]));
+	printf("%d\n",dpv[x][y][z]);
 }
