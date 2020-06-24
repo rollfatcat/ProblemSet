@@ -1,5 +1,6 @@
-// 解法是 C++的 multiset
-// BinarySearch+vector會TLE
+/* 解法是 C++的 multiset
+ * BinarySearch+vector會TLE
+ */
 #include<iostream>
 #include<set>
 using namespace std;
