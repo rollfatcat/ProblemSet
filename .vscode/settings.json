@@ -23,7 +23,8 @@
         "utility": "cpp",
         "valarray": "cpp",
         "vector": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "ios": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

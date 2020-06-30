@@ -1,6 +1,6 @@
-//Map的數值可能會overflow 記得用long long
-// 測資很難吃
-
+/* Map的數值可能會overflow 記得用long long
+ * 測資很難吃
+ */
 #include<iostream>
 using namespace std;
 
