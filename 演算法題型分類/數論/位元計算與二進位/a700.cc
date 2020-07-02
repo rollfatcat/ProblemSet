@@ -1,4 +1,5 @@
-// 陣列位置轉換, 輸出成2^n, 練習shift的寫法
+/* 陣列位置轉換, 輸出成2^n, 練習shift的寫法
+ */
 #include<iostream>
 using namespace std;
 

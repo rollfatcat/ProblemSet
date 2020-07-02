@@ -1,5 +1,6 @@
-// 數論：XOR的特性 => x^x=0
-// 題目要求輸出『無法成對』的數字(map可解)
+/* 數論：XOR的特性 => x^x=0
+ * 題目要求輸出『無法成對』的數字(map可解)
+ */
 #include<iostream>
 using namespace std;
 

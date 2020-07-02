@@ -21,10 +21,12 @@ int main(){
   scanInt(N);
   for(int i=0;i<N;i++){
     scanInt(x);
+    if(maxv<x) maxv=x, max_cnt=0;
     if(maxv==x) max_cnt++;
-    else if(maxv<x) maxv=x, max_cnt=1;
+    
+    if(minv>x) minv=x, min_cnt=0;
     if(minv==x) min_cnt++;
-    else if(minv>x) minv=x, min_cnt=1;
+  
     for(int j=0; x; j++,x>>=1)
       if(x&1)
         cnt[j]++;

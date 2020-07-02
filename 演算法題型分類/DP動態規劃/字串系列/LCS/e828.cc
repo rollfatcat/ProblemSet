@@ -29,8 +29,8 @@ int main(){
 				DP[now][0]=i+1<<1;
 				for(int j=1;j<=L;j++)
 					DP[now][j]=MIN(DP[pre][ j ]+2,
-					    					 DP[now][j-1]+2,
-					    					 DP[pre][j-1]+3*(ss[0][j-1]!=ss[1][i]));
+					    		   DP[now][j-1]+2,
+					    		   DP[pre][j-1]+3*(ss[0][j-1]!=ss[1][i]));
 				swap(pre,now);
 			}
 			if(DP[pre][L]<=ansL) 

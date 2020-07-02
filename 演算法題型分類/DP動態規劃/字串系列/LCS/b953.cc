@@ -1,4 +1,5 @@
-// 改良 a252 的三維DP 降至 二維的實作方式(0.1s/24.4MB)
+/* 改良 a252 的三維DP 降至 二維的實作方式(0.1s/24.4MB)
+ */
 #include<bits/stdc++.h>
 using namespace std;
 
