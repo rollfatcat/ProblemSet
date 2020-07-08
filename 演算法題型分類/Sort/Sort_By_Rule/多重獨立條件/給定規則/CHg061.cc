@@ -1,4 +1,5 @@
-// 注意：前入圍1/3的選手排序依據是名單出現順序不是誰花的時間比較少!!
+/* 注意：前入圍1/3的選手排序依據是名單出現順序不是誰花的時間比較少!!
+ */
 #include<iostream>
 #include<algorithm>
 using namespace std;

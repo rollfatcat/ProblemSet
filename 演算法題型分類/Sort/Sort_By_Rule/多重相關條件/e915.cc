@@ -1,5 +1,4 @@
 /* 給定Ｎ個客人的怒氣值和完成指定料理的等待時間，如何安排順序讓怒氣值的總和最小化？
- * 排序
  */
 #include<bits/stdc++.h>
 using namespace std;

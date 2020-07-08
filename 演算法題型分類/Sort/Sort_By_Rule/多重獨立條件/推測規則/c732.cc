@@ -1,5 +1,6 @@
-// 題目要兩兩一組,且希望組和組之間的差距越平均越好
-// 在上述前提下要輸出最大的組和
+/* 題目要兩兩一組,且希望組和組之間的差距越平均越好
+ * 在上述前提下要輸出最大的組和
+ */
 #include<iostream>
 #include<algorithm>
 using namespace std;

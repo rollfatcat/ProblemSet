@@ -1,4 +1,5 @@
-// bobbleSort
+/* BobbleSort
+ */
 #include<iostream>
 using namespace std;
 #define MaxItem 1000
@@ -29,6 +30,6 @@ int main(){
       item[j].n=item[MaxItem].n;
       item[j].w=item[MaxItem].w;
     }
-    cout<<total<<endl;
+    cout<<total<<'\n';
   }
 }

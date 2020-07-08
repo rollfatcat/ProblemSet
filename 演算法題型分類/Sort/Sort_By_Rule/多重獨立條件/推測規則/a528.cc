@@ -1,4 +1,5 @@
-// 大數(字串)排序
+/* 大數(字串)排序
+ */
 #include<iostream>
 #include<algorithm>
 using namespace std;

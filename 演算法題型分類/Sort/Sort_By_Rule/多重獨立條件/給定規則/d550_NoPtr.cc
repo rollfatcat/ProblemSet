@@ -1,6 +1,6 @@
-// N^2 的排序方法( 80%AC+ 20%TLE )
-// 強制使用 N㏒N 的Sort(0.6s/8MB)
-
+/* N^2 的排序方法( 80%AC+ 20%TLE )
+ * 強制使用 N㏒N 的Sort(0.6s/8MB)
+ */
 #include<iostream>
 #include<algorithm>
 using namespace std;

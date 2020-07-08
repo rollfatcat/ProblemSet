@@ -1,4 +1,5 @@
-// 依照規定排序
+/* 依照規定排序
+ */
 #include<iostream>
 #include<algorithm>
 using namespace std;
