@@ -1,5 +1,6 @@
-// 解法類似d555，但是與定義Dominate的方式不同
-// 所以排序規則和偵測方式需要略微調整
+/* 解法類似d555，但是與定義Dominate的方式不同
+ * 所以排序規則和偵測方式需要略微調整
+ */
 #include<bits/stdc++.h>
 using namespace std;
 

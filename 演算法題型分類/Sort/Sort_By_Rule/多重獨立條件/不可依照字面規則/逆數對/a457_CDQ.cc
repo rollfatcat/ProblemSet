@@ -1,5 +1,5 @@
-// 逆數對用 MergeSort 解 => CDQ想法
-
+/* 逆數對用 MergeSort 解 => CDQ想法
+ */
 #include<bits/stdc++.h>
 using namespace std;
 

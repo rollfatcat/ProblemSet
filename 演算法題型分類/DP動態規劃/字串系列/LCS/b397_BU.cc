@@ -1,57 +1,65 @@
-// Bottom-Up來做,只是用兩個一維陣列交替
-// 時間64ms, 但問題是不知道記憶體可以用更少的方法
-#include<iostream>
-#include<vector>
+/* 給兩個字串ＡＢ，按照字典順序列出所有ＡＢ的最長共同子序列。
+ * 題目保證字串長度不超過３２並且只會由小寫字母和數字組成。
+ * 核心作法：BottomUp＋滾動陣列
+ * 考慮到狀態轉移時當上/左的字串長度一樣時要合併需要剔除相同字串並維護字典序
+ *    (1)set    , 問題點插入新字串時的時間是 ㏒Ｎ, 實作後時間為0.9s
+ *    (2)vecotr , 給定兩個依照字典序的集合做合併並剔除相同的字串
+ */
+#include <bits/stdc++.h>
 using namespace std;
-#define MaxN 33
+ 
+const int MaxL=35;
+string ss[2];
+string empty_s;
+vector<string> dp[2][MaxL];
 
-vector<string> LCS[2][MaxN];
-string s1, s2;
-bool nxt, pre;
-
-void Union(int now){
-  LCS[nxt][now].clear();
-  int i=0, j=0;
-  while(i<LCS[nxt][now-1].size() and j<LCS[pre][now].size())
-    if(LCS[nxt][now-1][i]==LCS[pre][now][j])
-      LCS[nxt][now].push_back( LCS[nxt][now-1][i] ),  i++, j++;
-    else if(LCS[nxt][now-1][i]>LCS[pre][now][j])
-      LCS[nxt][now].push_back( LCS[pre][now][j++] );
-    else
-      LCS[nxt][now].push_back( LCS[nxt][now-1][i++] );
-  while(i<LCS[nxt][now-1].size())
-    LCS[nxt][now].push_back(LCS[nxt][now-1][i++]);
-  while(j<LCS[pre][now].size())
-    LCS[nxt][now].push_back(LCS[pre][now][j++]);
-}
 int main(){
-  int T;
-  cin>>T;
-  for(int caseNum=1;caseNum<=T;caseNum++){
-    cin>>s1>>s2;
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	
+	int L, caseT, pre, now;
+	cin>>caseT;
+	
+	dp[1][0]={""};
+	for(int caseI=1;caseI<=caseT;caseI++){
+		cin>>ss[0]>>ss[1];
 
-    for(int i=0;i<=s2.length();i++)
-      LCS[0][i].clear(), LCS[0][i].push_back(""),
-      LCS[1][i].clear(), LCS[1][i].push_back("");
-    pre=1, nxt=0;
-    for(int i=0;i<s1.length();i++){
-      pre=pre^1, nxt=nxt^1;
-      for(int j=0;j<s2.length();j++)
-        if(s2[j]==s1[i]){
-          LCS[nxt][j+1].clear();
-          for(int k=0;k<LCS[pre][j].size();k++)
-            LCS[nxt][j+1].push_back(LCS[pre][j][k]+s1[i]);
-        }else{
-          if(LCS[pre][j+1][0].length()==LCS[nxt][j][0].length())
-            Union(j+1);
-          else if(LCS[pre][j+1][0].length()>LCS[nxt][j][0].length())
-            LCS[nxt][j+1].assign(LCS[pre][j+1].begin(),LCS[pre][j+1].end());
-          else
-            LCS[nxt][j+1].assign(LCS[nxt][j].begin(),LCS[nxt][j].end());
-        }
-    }
-    cout<<"Case #"<<caseNum<<": "<<LCS[nxt][s2.length()].size()<<endl;
-    for(int i=0;i<LCS[nxt][s2.length()].size();i++)
-      cout<<LCS[nxt][s2.length()][i]<<endl;
-  }
+		pre=0, now=1;
+		for(int j=0;j<=ss[1].length();j++) 
+			dp[0][j]={""};
+		for(int i=0;ss[0][i]!='\0';i++){
+			for(int j=0;ss[1][j]!='\0';j++){
+				dp[now][j+1].clear();
+				if(ss[0][i]==ss[1][j]){
+					for(string s:dp[pre][j])
+						dp[now][j+1].emplace_back(s+ss[0][i]);
+				}else{
+					if( dp[now][j][0].length()>dp[pre][j+1][0].length() )
+						dp[now][j+1]=dp[now][j];
+					else if( dp[now][j][0].length()<dp[pre][j+1][0].length() )
+						dp[now][j+1]=dp[pre][j+1];
+					else{ // 給定兩個依照字典序的集合做合併並剔除相同的字串
+						int a=0, b=0;
+						while(a<dp[now][j].size() and b<dp[pre][j+1].size()){
+							if(dp[now][j][a]<dp[pre][j+1][b])
+								dp[now][j+1].emplace_back(dp[now][j][a++]);
+							else if(dp[now][j][a]>dp[pre][j+1][b])
+								dp[now][j+1].emplace_back(dp[pre][j+1][b++]);
+							else
+								dp[now][j+1].emplace_back(dp[pre][j+1][b++]),a++;
+						}
+						while(a<dp[now][j].size())
+							dp[now][j+1].emplace_back(dp[now][j][a++]);
+						while(b<dp[pre][j+1].size())
+							dp[now][j+1].emplace_back(dp[pre][j+1][b++]);
+					}
+				}
+			}
+			swap(pre,now);
+		}
+		
+		cout<<"Case #"<<caseI<<": "<<dp[pre][ss[1].length()].size()<<'\n';
+		for(string s:dp[pre][ss[1].length()])
+			cout<<s<<'\n';
+	}
 }
