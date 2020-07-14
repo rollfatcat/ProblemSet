@@ -2,23 +2,27 @@
  * Ｎ ≦ 1e5，但每個食物的飽足感不超過 1e3。
  * 從最大飽足感的食物開始選。
  */
-#include<iostream>
-#include<algorithm>
+#include<bits/stdc++.h>
 using namespace std;
 
+const int MaxN=1e5;
+const int MaxV=1e3;
+int cnt[MaxV+1]={};
 int main(){
-  ios::sync_with_stdio(0),
-  cin.tie(0), cout.tie(0);
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	
+	int N, K, v;
+	cin>>N>>K;
+	while(N-->0){
+		cin>>v;
+		cnt[v]++;
+	}
+	
+	int ans=0;
+	for(N=MaxV; N>0 and K-cnt[N]*N>0; N--)
+		ans+=cnt[N],
+		K-=cnt[N]*N;
 
-  int w[100000];
-  for(int n,m; cin>>n>>m;){
-    for(int i=0;i<n;i++)
-      cin>>w[i];
-    sort(w,w+n);
-    int idx, nowW=0;
-    for(idx=n-1;idx>=0 and nowW<m;idx--)
-      nowW+=w[idx];
-    if(nowW<m)  cout<<"OAQ"<<endl;
-    else cout<<n-1-idx<<endl;
-  }
+	(N==0)? cout<<"OAQ\n" : cout<< ans+(K/N)+(K%N>0) <<'\n';
 }

@@ -1,30 +1,36 @@
 /* 大數(字串)排序
+ * (1) 正數一定比負數大
+ * (2) 字串長度
+ * (3) 直接比字串
  */
-#include<iostream>
-#include<algorithm>
+#include<bits/stdc++.h>
 using namespace std;
-#define MaxN 1002
 
-bool Ncompare(string a, string b){ return (a.length()==b.length())?(a>b):(a.length()>b.length()); }
-bool Pcompare(string a, string b){ return (a.length()==b.length())?(a<b):(a.length()<b.length()); }
+const int MaxN=1e3;
+string number[MaxN];
+
+bool Smaller(string& a,string& b){
+	if(a[0]=='-' ^ b[0]=='-') return a[0]=='-';
+	
+  bool nagtive= a[0]=='-';
+	if(a.length()!=b.length()) 
+		return nagtive? a.length()>b.length(): a.length()<b.length();
+	return nagtive? a>b: a<b;
+}
+
 int main(){
-  string Pss[MaxN], Nss[MaxN], str;
-  int N, Pnum, Nnum;
-
-  while(cin>>N){
-    Pnum=Nnum=0;
-    for(int i=0;i<N;i++){
-      cin>>str;
-      if(str[0]=='-')
-        Nss[Nnum++]=str;
-      else
-        Pss[Pnum++]=str;
-    }
-    sort(Nss,Nss+Nnum,Ncompare);
-    sort(Pss,Pss+Pnum,Pcompare);
-    for(int i=0;i<Nnum;i++)
-      cout<<Nss[i]<<endl;
-    for(int i=0;i<Pnum;i++)
-      cout<<Pss[i]<<endl;
-  }
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	
+	int N;
+	while(cin>>N){
+		for(int i=0;i<N;i++)
+			cin>>number[i];
+		for(int i=0;i<N;i++){
+			for(int j=i+1;j<N;j++)
+				if( Smaller(number[j],number[i]) )
+					swap(number[j],number[i]);
+			cout<<number[i]<<'\n';
+		}
+	}
 }
