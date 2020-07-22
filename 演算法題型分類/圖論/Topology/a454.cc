@@ -1,5 +1,6 @@
-// 題目沒有保證『單一起點和單一終點』=> 拓墣排序( 適用於 Directed Acyclic Graph )
-// 題解：http://mypaper.pchome.com.tw/zerojudge/post/1323147294
+/* 題目沒有保證『單一起點和單一終點』=> 拓墣排序( 適用於 Directed Acyclic Graph )
+ * 題解：http://mypaper.pchome.com.tw/zerojudge/post/1323147294
+ */
 #include<bits/stdc++.h>
 using namespace std;
 

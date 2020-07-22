@@ -7,38 +7,41 @@
  *     每張牌的狀態都只有正面/背面兩種，只需要考慮『多餘次數』模二的餘數決定是否扣除
  */
 
-#include<bits/stdc++.h>
+#include<bits/stdc++.h> 
 using namespace std;
-#define MAXN 10001
 
-int N; // 桌上的牌數
-int K; // 需要翻面的次數
-int number[MAXN];
+const int MaxN=1e4;
+const int MaxK=1e9;
+int card[MaxN];
+int CloseZero(int Base,int Len){
+	if(Base==0)  return card[0];
+	if(Base==Len)return -card[Len-1];
+	return (-card[Base-1]<card[Base])? -card[Base-1]: card[Base];
+}
 int main(){
-  while(scanf("%d%d",&N,&K)!=EOF){
-    int sum=0;
-    int cnt_negative=0;
-    int close_zero=1<<30;
-
-    for(int i=0;i<N;i++){
-      scanf("%d",&number[i]);
-      sum+=number[i];
-      if(number[i]<0){
-        cnt_negative++;
-        if(-number[i]<close_zero)
-          close_zero=-number[i];
-      }
-      else{
-        if(number[i]<close_zero)
-          close_zero=number[i];
-      }
-    }
-    sort(number,number+N);
-    for(int i=0;i<min(cnt_negative,K);i++)
-      sum+=(-number[i])<<1;
-    K-=cnt_negative;
-    if(K>0 and (K&1))
-      sum-=close_zero<<1;
-    printf("%d\n",sum);
-  }
+	
+	for(int N, K;scanf("%d %d\n",&N,&K)!=EOF;){
+		int CntNeg=0;
+		for(int i=0;i<N;i++){
+			scanf("%d",&card[i]);
+			CntNeg+= card[i]<0;
+			for(int j=i;j>0 and card[j]<card[j-1];j--)
+				swap(card[j],card[j-1]);
+		}
+		
+		int ans=0;
+		if(CntNeg>=K){
+			for(int i=0;i<K;i++)
+				ans-=card[i];
+			for(int i=K;i<N;i++)
+				ans+=card[i];
+		}else{
+			for(int i=0;i<N;i++)
+				ans+= (card[i]<0)? -card[i]: card[i];
+			if( (K-CntNeg)&1 )
+				ans-= CloseZero(CntNeg,N)<<1;
+		}
+		printf("%d\n",ans);
+	}
+	
 }

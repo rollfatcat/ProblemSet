@@ -1,20 +1,17 @@
-// 最長共同字串
+/* 給定２個字串，輸出最長共同子字串的長度？
+ */
 #include<iostream>
 #include<cstring>
-#include<cmath>
 using namespace std;
 
+const int MaxN=1e2+1;
+char ss[2][MaxN];
+int dp[MaxN][MaxN]={};
 int main(){
-  string s1,s2;
-  cin>>s1>>s2;
-  int map[s1.length()+1][s2.length()+1];
-  memset(map,0,sizeof(map));
-
-  for(int i=0;i<s1.length();i++)
-    for(int j=0;j<s2.length();j++)
-      if(s1[i]==s2[j])
-        map[i+1][j+1]=map[i][j]+1;
-      else
-        map[i+1][j+1]=max(map[i+1][j],map[i][j+1]);
-  cout<<map[s1.length()][s2.length()]<<endl;
+  
+  scanf("%s\n%s\n",ss[0],ss[1]);
+  for(int i=0; ss[0][i]!='\0'; i++)
+    for(int j=0; ss[1][j]!='\0'; j++)
+      dp[i+1][j+1]= (ss[0][i]==ss[1][j])? dp[i][j]+1: max(dp[i+1][j],dp[i][j+1]);
+  printf("%d\n",dp[ strlen(ss[0]) ][ strlen(ss[1] )] );
 }
