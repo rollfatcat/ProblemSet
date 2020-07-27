@@ -1,40 +1,30 @@
 // 這題的輸入數量很大(500000) 時間必須壓在 N㏒N
 // Robinson-Schensted-Knuth Algorithm : http://www.csie.ntnu.edu.tw/~u91029/LongestIncreasingSubsequence.html#3
-#include<iostream>
-#include<vector>
+#include<bits/stdc++.h>
 using namespace std;
 
-bool scanInt(int &x){char c;for(x=0;(c=getchar())>='0' and c<='9';x=(x<<3)+(x<<1)+c-'0');return c!=EOF;}
-vector<int> LIS;
-int BS(int x){
-  if(x>LIS.back())  return LIS.size();
-  int l=0,r=LIS.size()-1,m;
-  while(l<=r){
-    m=(l+r)>>1;
-    if(LIS[m]==x) return m;
-    else if(LIS[m]>x) r=m-1;
-    else l=m+1;
-  }
-  return l;
-}
+const int MaxN=5e5;
+int num[MaxN];
+int cnt[MaxN];
+int vec[MaxN];
 int main(){
+	scanf("%d\n",&num[0]);
+	vec[0]=num[0], cnt[0]=1;
 
-  int cnt, num[500000], pos[500000];
-  // 先推一個到LIS才能方便比對時呼叫LIS.back()不會出錯
-  scanInt(num[0]),
-  LIS.push_back(num[0]),
-  pos[0]=0;
-  for(cnt=1; scanInt(num[cnt]);cnt++){
-    pos[cnt]=BS(num[cnt]);
-    if(pos[cnt]==LIS.size()) LIS.push_back(num[cnt]);
-    else LIS[pos[cnt]]=num[cnt];
-  }
-  // 反向把找到的位置推到vec
-  int len=LIS.size()-1;
-  for(int i=cnt-1;i>=0;i--)
-    if(pos[i]==len)
-      LIS[len--]=num[i];
-  printf("%lu\n-\n",LIS.size());
-  for(auto n:LIS)
-    printf("%d\n",n);
+	int N=1, vecL=1, pos;
+	for(; scanf("%d",&num[N])!=EOF; N++)
+		if(num[N]>vec[vecL-1])
+			vec[vecL]=num[N],
+			cnt[N]=++vecL;
+		else
+			pos=lower_bound(vec,vec+vecL,num[N])-vec,
+			vec[pos]=num[N],
+			cnt[N]=pos+1;
+		
+		for(int i=N-1,L=vecL;L>0;i--)
+			if(cnt[i]==L)
+				vec[L--]=num[i];
+		printf("%d\n-\n",vecL);
+		for(int i=1;i<=vecL;i++)
+			printf("%d\n",vec[i]);
 }

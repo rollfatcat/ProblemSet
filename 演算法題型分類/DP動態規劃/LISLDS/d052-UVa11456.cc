@@ -5,29 +5,33 @@
  * 原文：https://blog.csdn.net/L_BestCoder/article/details/64131002
  * 以下的方法是O(N^2)作法完成後可以接『高階演算法』的 a596 題目必須是O(N㏒N)
  */
-#include<iostream>
+#include<bits/stdc++.h>
 using namespace std;
+const int MaxN=2e3;
+int num[MaxN];
+int LIS[MaxN];
+int LDS[MaxN];
 
 int main(){
-  int caseT, N;
-  int num[2000];
-  int LIS[2000];
-  int LDS[2000];
-  for(cin>>caseT; caseT--;){
-    cin>>N;
-    for(int i=0;i<N;i++)
-      cin>>num[i],
-      LIS[i]=LDS[i]=1;
-    int MaxL=0;
-    for(int i=N-1;i>=0;i--){  //注意更新方向
-      for(int j=N-1;j>i;j--){
-        if(num[i]<num[j])
-          LIS[i]=max(LIS[i],LIS[j]+1);
-        if(num[i]>num[j])
-          LDS[i]=max(LDS[i],LDS[j]+1);
-      }
-      MaxL=max(MaxL,LDS[i]+LIS[i]-1);
-    }
-    cout<<MaxL<<endl;
+	int Q, N;
+  scanf("%d\n",&Q);
+  while(Q-->0){
+  	scanf("%d\n",&N);
+  	for(int i=0;i<N;i++)
+  		scanf("%d",&num[i]);
+  	int maxL=0;
+  	for(int i=N-1;i>=0;i--){
+  		LIS[i]=LDS[i]=0;
+  		for(int j=i+1;j<N;j++){
+  			if(num[i]<num[j])
+  				LIS[i]=max(LIS[i],LIS[j]);
+  			if(num[i]>num[j])
+  				LDS[i]=max(LDS[i],LDS[j]);
+  		}
+  		LIS[i]++;
+  		LDS[i]++;
+  		maxL=max(maxL,LIS[i]+LDS[i]-1);
+  	}
+  	printf("%d\n",maxL);
   }
 }
