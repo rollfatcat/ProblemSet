@@ -1,5 +1,5 @@
 // 這題的輸入數量很大(500000) 時間必須壓在 N㏒N
-// Robinson-Schensted-Knuth Algorithm : http://www.csie.ntnu.edu.tw/~u91029/LongestIncreasingSubsequence.html#3
+// Robinson-Schensted-Knuth Algorithm :
 #include<bits/stdc++.h>
 using namespace std;
 
