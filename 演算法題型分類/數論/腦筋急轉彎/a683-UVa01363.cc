@@ -19,31 +19,26 @@ using namespace std;
  
 const int MaxN=1e9;
 const int MaxK=1e9;
-long H(long N,long K,long rem=0){
-    for(int i=1;i<=N;i++)
-        rem+= K%i;
-    return rem;
+long H(long N,long K,long r=0){
+	for(int i=2;i<=N;i++)
+		r+=K%i;
+	return r;
 }
-long Func(long N,long K,long rem=0){
-	if(N>K) rem=(N-K)*K;
-	int preMod=0, preDiv=K;
-	int Dsr, nowDiv;
+long Func(long N,long K){
+	long rem=(N>K)? (N-K)*K: 0;
+	int Dsr, nowQ, preQ=K;
 	long cnt;
-	for(Dsr=2; Dsr<=N and Dsr<=preDiv; Dsr++){
-		nowDiv=K/Dsr;
-		rem+= K%Dsr; 
-		if(preDiv<=N)
-			cnt=preDiv-nowDiv,
-			rem+= preMod*cnt+(cnt*(cnt-1)>>1)*(Dsr-1);
-		else if(nowDiv<N)
-			cnt=N-nowDiv,
-			preMod+= (preDiv-N)*(Dsr-1),
-			rem+= preMod*cnt+(cnt*(cnt-1)>>1)*(Dsr-1);
-			
-		preDiv=nowDiv;
-		preMod=K%Dsr;
+	for(Dsr=2; Dsr<=N and Dsr*Dsr<=K; Dsr++){
+		nowQ=K/Dsr;
+		rem+=K%Dsr; 
+		if(nowQ<N and N<=preQ)
+			preQ=N;
+		cnt=preQ-nowQ;
+		if(N>nowQ)	
+			rem+= (K%preQ)*cnt+(cnt*(cnt-1)>>1)*(Dsr-1);
+		preQ=nowQ;
 	}
-	return (Dsr>preDiv+1)? rem-preMod: rem;
+	return (preQ==Dsr)? rem+K%Dsr: rem;
 }
 int main(){
 	for(int N, K;scanf("%d %d\n",&N,&K)!=EOF;)

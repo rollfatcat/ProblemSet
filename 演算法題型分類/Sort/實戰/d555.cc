@@ -1,26 +1,31 @@
-#include<iostream>
-#include<vector>
-#include<algorithm>
+#include<bits/stdc++.h>
 using namespace std;
-#define MaxN 500000
 
-struct node{ int x, y; } points[MaxN];
-bool compare(node a,node b){ return (a.x==b.x)?(a.y<b.y):(a.x<b.x); }
+const int MaxN=5e5;
+int data[MaxN][2];
+int ord[MaxN];
+int ans[MaxN];
+
+bool compare(int a,int b){ return (data[a][0]==data[b][0])? data[a][1]<data[b][1]: data[a][0]<data[b][0]; }
 int main(){
-  int N;
-  for(int t=1;cin>>N;t++){
-    for(int i=0;i<N;i++)
-      cin>>points[i].x>>points[i].y;
-    sort(points,points+N,compare);
-    vector<node>ans;
-    int base=-1;
-    for(int i=N-1;i>=0;i--)
-      if(points[i].y>base)
-        ans.push_back(points[i]), base=points[i].y;
-
-    cout<<"Case "<<t<<":\n";
-    cout<<"Dominate Point: "<<ans.size()<<endl;
-    for(int i=ans.size()-1;i>=0;i--)
-      cout<<'('<<ans[i].x<<','<<ans[i].y<<")\n";
-  }
+	int N;
+	for(int caseI=1;scanf("%d\n",&N)!=EOF;caseI++){
+		for(int i=0;i<N;i++)
+			scanf("%d %d\n",&data[i][0],&data[i][1]);
+		for(int i=0;i<N;i++)
+			ord[i]=i;
+		sort(ord,ord+N,compare);
+		
+		int ansL=0;
+		int now_y=data[ ord[N-1] ][1];
+		ans[ansL++]=ord[N-1];
+		for(int i=N-2;i>=0;i--)
+			if(data[ ord[i] ][1]>now_y)
+				ans[ansL++]=ord[i],
+				now_y=data[ ord[i] ][1];
+				
+		printf("Case %d:\nDominate Point: %d\n",caseI,ansL);
+		for(int i=ansL-1;i>=0;i--)
+			printf("(%d,%d)\n",data[ans[i]][0],data[ans[i]][1]);
+	}
 }
