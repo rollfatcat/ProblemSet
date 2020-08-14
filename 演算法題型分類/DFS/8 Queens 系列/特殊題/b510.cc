@@ -1,54 +1,44 @@
-// 有趣的題型：擺城堡和擺皇后的判斷方式不同,每次DFS時兩種都嘗試擺(如果還有數量)
-#include<iostream>
+/* 給定Ｎ個 Queen 和Ｍ個 Rook 擺在(Ｎ+Ｍ)的棋盤上互不衝突的方法數？
+ * 解題核心：八皇后的變形版
+ * 城堡只需考慮直行是否存在其他棋子不需要考慮斜角線，之後若要再擺上皇后會有影響。
+ * 狀態的設定：
+ * col＝城堡或皇后都需要考慮"是否"擺放其他棋子，boolean 紀錄。
+ * psh、nsh＝城堡不考慮但皇后需要，處理"城堡還原"時只有還原到數量＝０才能放皇后，所以需要紀錄數量(int)
+ *          一旦該斜角線存在皇后時直接將數量扣到０代表不能再放入城堡，還原時則回覆到"最大值"。
+ */
+#include<bits/stdc++.h>
 using namespace std;
 
-int M, N, K, cnt;
-int pos_x[10], type[10], tnum;
-int Lslash[21], Rslash[21], col[10];
-int *ls=&Lslash[0];  //=== /  範圍變化：x+y =   0 ~ 20
-int *rs=&Rslash[10]; //=== \  範圍變化：x-y = -10 ~ 10
+const int MaxCnt=10;
+bool col[MaxCnt];
+int psh[MaxCnt<<1];
+int nsh[MaxCnt<<1];
+int ans, base;
 
-void DFS(int y,int m,int n){
-  if(y==K){
-    cnt++;
-    //for(int i=0;i<K;i++,cout<<endl)
-    //  for(int j=0;j<K;j++)
-    //    if(pos_x[i]==j) cout<<((type[i])?'Q':'C');
-    //    else        cout<<'-';
-    //cout<<endl;
-    return;
-  }
-  for(int i=0;i<K;i++){ //擺哪邊
-    if(col[i]==0){
-      //pos_x[y]=i;
-      //===放皇后, 把兩側的對角線方程式數值設定成K
-      if(m>0 and ls[i+y]==0 and rs[i-y]==0){
-        //type[y]=1;
-        ls[i+y]=rs[i-y]=K,  col[i]=1;
-        DFS(y+1,m-1,n);
-        ls[i+y]=rs[i-y]=col[i]=0;
-      }
-      //===放城堡, 把兩側的對角線方程式數值+1, 這樣回朔時-1
-      //===實現：對角線都沒有城堡或是皇后時可以任意放置的情況
-      if(n>0 and ls[i+y]<K and rs[i-y]<K){
-        //type[y]=0;
-        ls[i+y]++,  rs[i-y]++,  col[i]=1;
-        DFS(y+1,m,n-1);
-        ls[i+y]--,  rs[i-y]--,  col[i]=0;
-      }
-    }
-  }
+void DFS(int Queen,int Rook,int y){
+	if(y==base){ ans++; return; }
+	for(int x=0;x<base;x++){
+		if(Queen>0 and col[x] and psh[x+y]==base and nsh[x-y+base]==base){	
+			col[x]=psh[x+y]=nsh[x-y+base]=0;
+			DFS(Queen-1,Rook,y+1);
+			col[x]=1, psh[x+y]=nsh[x-y+base]=base;
+		}
+		if(Rook>0 and col[x] and psh[x+y] and nsh[x-y+base]){	
+			col[x]=0, psh[x+y]--, nsh[x-y+base]--;
+			DFS(Queen,Rook-1,y+1);
+			col[x]=1, psh[x+y]++, nsh[x-y+base]++;
+		}
+	}
 }
 int main(){
-  while(cin>>M>>N){
-    K=M+N;
-    // Initial
-    cnt=0;
-    fill(col,col+K,0);
-    fill(ls,ls+2*K,0);
-    fill(rs-K,rs+K,0);
-    // GoMap
-    DFS(0,M,N);
-    cout<<cnt<<endl;
-  }
+	int N, M;
+	while(scanf("%d %d\n",&N,&M)!=EOF){
+		base=N+M;
+		fill(col,col+base,1);
+		fill(psh,psh+(base<<1),base);
+		fill(nsh,nsh+(base<<1),base);
+		ans=0;
+		DFS(N,M,0);
+		printf("%d\n",ans);
+	}
 }
