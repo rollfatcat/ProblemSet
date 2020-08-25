@@ -1,40 +1,36 @@
-// 14 Queens
-// 應該要做優化偷跑，但是沒有也可以OK，以下是未優化版本
-#include<iostream>
+/* 給定邊長Ｎ的棋盤和Ｎ×Ｎ的格子能不能放皇后，輸出方法數？
+ * 解題關鍵：EightQueen 變形題(遞迴前需要檢查棋盤上這格能不能放皇后)
+ */
+#include<bits/stdc++.h>
 using namespace std;
 
-int N, cnt;
-bool bitMask[14][14];
-bool Lslash[27], Rslash[27], col[14];
-bool *ls=&Lslash[0];  // /  範圍變化：x+y =   0 ~ 26
-bool *rs=&Rslash[13]; // \  範圍變化：x-y = -13 ~ 13
+const int MaxN=14;
+bool column[MaxN]={1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+bool negative[MaxN<<1]={1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+bool positive[MaxN<<1]={1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 
-void DFS(int y){
-  if(y==N){
-    cnt++;  return;
-  }
-  for(int i=0;i<N;i++)
-    if(bitMask[y][i] and col[i] and ls[i+y] and rs[i-y]){
-      ls[i+y]=rs[i-y]=col[i]=false;
-      DFS(y+1);
-      ls[i+y]=rs[i-y]=col[i]=true;
-    }
+int N, cnt;
+char oness[MaxN+2];
+bool board[MaxN][MaxN];
+
+void PutQueens(int row){
+	if(row==N){ cnt++; return; }
+	for(int col=0;col<N;col++)
+		if(column[col] & negative[col+row] & positive[col-row+N] & board[row][col]){
+			column[col]=negative[col+row]=positive[col-row+N]=0;
+			PutQueens(row+1);
+			column[col]=negative[col+row]=positive[col-row+N]=1;
+		}
 }
-int main(){
-  string ss;
-  int caseNum=1;
-  while(cin>>N and N){
-    for(int i=0;i<N;i++){
-      cin>>ss;
+int main() {
+	for(int caseI=1;scanf("%d\n",&N)!=EOF and N>0;caseI++){
+		for(int i=0;i<N;i++){
+			scanf("%s\n",oness);
       for(int j=0;j<N;j++)
-        bitMask[i][j]=(ss[j]=='.');
+        board[i][j]= oness[j]=='.';
     }
-    fill(col,col+N,1);
-    fill(ls,ls+2*N,1);
-    fill(rs-N,rs+N,1);
-    cnt=0;
-    DFS(0);
-    cout<<"Case "<<caseNum<<": "<<cnt<<endl;
-    caseNum++;
-  }
+		cnt=0;
+		PutQueens(0);
+		printf("Case %d: %d\n",caseI,cnt);
+	}
 }

@@ -1,32 +1,40 @@
-/* 題目的輸入格式較為麻煩, 需要注意
+/* 給定一個字串(包含二進位和位元運算符號)，輸出時將位元運算符號的字串改為符號並且輸出計算後的答案
+ * 解題關鍵：字串解析＋位元運算
+ * 格式是固定的(每個字串間間隔一個空白 且 二進位的字串長度一定是５)
  */
-#include<iostream>
-#include<sstream>
+#include<bits/stdc++.h>
 using namespace std;
- 
-// 把輸入的『二進位字串』轉為『數字』, 題目有保證字串長度5
-int StringNum(string ss){ return ((ss[0]-'0')*16)+((ss[1]-'0')*8)+((ss[2]-'0')*4)+((ss[3]-'0')*2)+ss[4]-'0'; }
- 
-// 把輸入的『數字』轉為『二進位字串』
-string NumString(int x){
-  string ss="";
-  for(int i=0;i<5;i++,x>>=1)
-    ss=((x%2)?'1':'0')+ss;
-  return ss;
-}
- 
-int main(){
-    ios::sync_with_stdio(0),
-    cin.tie(0), cout.tie(0);
 
-  string line, word;
-  while( getline(cin,line) ){ // 利用getline()讀取到line
-    istringstream iss(line); // 將 line 根據空白切割存放到 iss
-    iss>>word, cout<<word; // 每次執行 iss>>word 時會把字串放到word
-    int num=StringNum(word); // 第一個字串一定是『數字』, 之後是運算符號(AND/OR) 和 數字 交替出現
-    while(iss>>word)
-      if(word=="or")  cout<<"||", iss>>word, cout<<word, num|=StringNum(word);
-      else            cout<<"&&", iss>>word, cout<<word, num&=StringNum(word);
-    cout<<" = "<<NumString(num)<<endl;
-  }
+int main(){
+	ios::sync_with_stdio(0);
+	cin.tie(0); cout.tie(0);
+	
+	string ss;
+	while(getline(cin,ss)){
+		bool num[5]={0,0,0,0,0}, opt=1;
+		int idx=0;
+		while(ss[idx]!='\0'){
+			if(ss[idx]=='0' or ss[idx]=='1'){
+				if(opt){
+					cout<<ss[idx]; num[0]|= ss[idx++]=='1';
+					cout<<ss[idx]; num[1]|= ss[idx++]=='1';
+					cout<<ss[idx]; num[2]|= ss[idx++]=='1';
+					cout<<ss[idx]; num[3]|= ss[idx++]=='1';
+					cout<<ss[idx]; num[4]|= ss[idx++]=='1';
+				}else{
+					cout<<ss[idx]; num[0]&= ss[idx++]=='1';
+					cout<<ss[idx]; num[1]&= ss[idx++]=='1';
+					cout<<ss[idx]; num[2]&= ss[idx++]=='1';
+					cout<<ss[idx]; num[3]&= ss[idx++]=='1';
+					cout<<ss[idx]; num[4]&= ss[idx++]=='1';
+				}
+				idx++;
+			}
+			else{ // ss[idx]=='a' or ss[idx]=='o')
+				if(ss[idx]=='a'){ opt=0; cout<<"&&"; idx+=4; }
+				if(ss[idx]=='o'){ opt=1; cout<<"||"; idx+=3; }
+			}
+		}
+		cout<<" = "<<num[0]<<num[1]<<num[2]<<num[3]<<num[4]<<'\n';
+	}
 }

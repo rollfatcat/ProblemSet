@@ -1,32 +1,38 @@
-// 狀態壓縮的DP解法=>最終優化(以bit為單位思考)  時間：3.28s=>0.47s
-#include<iostream>
+/* 給定邊長Ｎ的棋盤和Ｎ×Ｎ的格子能不能放皇后，輸出方法數？
+ * 解題關鍵：Recursion＋BitMask(狀態壓縮)
+ */
+#include<bits/stdc++.h>
 using namespace std;
 
-int N, cnt, y_row[20];
-void DFS(int y, int x, int Nslash, int Pslash){
-  if(y==N){ cnt++;  return; }
-  int Nmask = Nslash>>y;
-  int Pmask = Pslash>>(N-y-1);
-  int canPutQueen = y_row[y] & x & Nmask & Pmask;
-  while(canPutQueen){
-    int xPut = canPutQueen & (-canPutQueen);
-    DFS(y+1, x^xPut, Nslash^(xPut<<y), Pslash^(xPut<<(N-y-1)) );
-    canPutQueen^=xPut;
-  }
+const int MaxN=14;
+int N, cnt;
+int board[MaxN];
+char oness[MaxN+2];
+
+void PutQueens(int row,int col,int negative,int positive){
+	if(row==N){ cnt++; return; }
+  int Nmask=negative>>row;
+	int Pmask=positive>>(N-1-row);
+	int canPutQueen= board[row] & col & Pmask & Nmask;
+	for(int yPut; canPutQueen>0; canPutQueen^=yPut){
+		yPut=canPutQueen& -canPutQueen;
+		PutQueens(row+1, col^yPut, negative^(yPut<<row), positive^(yPut<<(N-row-1)) );
+	}
 }
 int main(){
-  string ss;
-
-  for(int caseNum=1;cin>>N and N;caseNum++){
+	int D, caseI=1;
+	while(scanf("%d\n",&N)!=EOF and N>0){
+		/* 講每個 Row 能不能放皇后的狀態壓縮成一個整數做代表 
+     * 第ｉ個整數的第ｊ個位元代表(ｉ,ｊ)這格子能不能放皇后
+     */
     for(int i=0;i<N;i++){
-      cin>>ss;
-      y_row[i]=0;
-      for(int j=0;j<ss.length();j++)
-        if(ss[j]=='.')
-          y_row[i]+=(1<<j);
-    }
+			scanf("%s\n",oness);
+      board[i]=0;
+      for(int j=0;j<N;j++)
+        board[i]|= (oness[j]=='.')<<j;
+    } 
     cnt=0;
-    DFS(0, (1<<N)-1, (1<<(2*N-1))-1, (1<<(2*N-1))-1);
-    cout<<"Case "<<caseNum<<": "<<cnt<<endl;
-  }
+		PutQueens(0, (1<<N)-1, (1<<(2*N-1))-1, (1<<(2*N-1))-1);
+		printf("Case %d: %d\n",caseI++,cnt);
+	}
 }
