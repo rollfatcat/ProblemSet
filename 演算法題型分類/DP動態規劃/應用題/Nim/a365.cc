@@ -19,7 +19,7 @@ int main(){
     for(int i=0;i<24;i++)
       if((nowS&one_step[i])==one_step[i])
         state[nowS]=state[nowS]|(!state[nowS^one_step[i]]);
-  // 主程式
+  /* main */
   int N;
   for(cin>>N;N--;){
     string ss;  cin>>ss;
