@@ -7,21 +7,17 @@ using namespace std;
 const int MaxN=1e5;
 const int MaxK=1e5;
 int N, K;
-int num[MaxN];
+int num[MaxN+1];
 
-int BinarySearch(int v){
-  for(int L=0, R=N-1, M; L<=R; (num[M]<v)? L=M+1: R=M-1){
-    M=L+R>>1;
-    if(num[M]==v)
-      return M+1;
-  }
-  return 0;
-}
 int main(){
   scanf("%d %d\n",&N,&K);
-  for(int i=0;i<N;i++)
+  for(int i=1;i<=N;i++)
   	scanf("%d",&num[i]);
-  for(int qv;K>0;K--)
-    scanf("%d",&qv),
-    printf("%d\n",BinarySearch(qv));
+  sort(num+1,num+N+1);
+  int qv, tag;
+  while(K-->0){
+    scanf("%d",&qv);
+    tag=lower_bound(num+1,num+N+1,qv)-num;
+    printf("%d\n",num[tag]==qv ? tag: 0);
+  }
 }

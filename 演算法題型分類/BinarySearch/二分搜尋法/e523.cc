@@ -1,9 +1,11 @@
-/* 建表：費波那契數列產生後, 做二分搜尋法確定數列是否包含目標數字
+/* 給定一個數字，若該數字屬於費波那契數列則輸出他是第幾項，否則輸出-1
+ * 解題關鍵：二分搜尋法STL
+ * 建表，費波那契數列產生後，做二分搜尋法確定數列是否包含目標數字
  */
 #include<bits/stdc++.h>
 using namespace std;
 
-const int MaxNum=1000000;
+const int MaxNum=1e6;
 vector<int> FIB={1,1};
 int main(){
 	for(int i=2;FIB.back()<=MaxNum;i++)
