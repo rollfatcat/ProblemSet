@@ -20,7 +20,7 @@ void Recursive(int x,int y,int cnt){
 	/* 檢查能不能放：放城堡 */
 	if(use[x][y]==-1){ 
 		use[x][y]=cnt;
-		/* 把攻擊範圍內的格子設為不能放置 */
+		/* 把攻擊範圍內(從目前位置延伸出去直到牆壁或是邊界)的格子設為該城堡的編號代表不能放置 */
 		bool setZero[4][4]={};
 		for(int U=x-1; U>=0 and use[U][y]!=-2;U--) if(use[U][y]==-1) use[U][y]=cnt;
 		for(int D=x+1; D< N and use[D][y]!=-2;D++) if(use[D][y]==-1) use[D][y]=cnt;
