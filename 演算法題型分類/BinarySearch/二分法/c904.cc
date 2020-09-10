@@ -1,54 +1,57 @@
-// 二分法：最大化平均值
-// 題解：https://blog.csdn.net/m0_37846371/article/details/73321853
-/* 实际上，对于这个问题使用二分搜索法可以很好地解决。我们定义：
- * C(x):=可以选择使得单位重量的价值不小于x
- * 因此，原问题就变成了求满足C(x)的最大的x。假设我们选了某个物品的集合S，
- * 那么它们的单位重量的价值是：∑v[i]/∑w[i]（i∈S），
- * 因此就变成了判断是否存在S满足下面的条件∑v[i]/∑w[i]（i∈S）>=x，
- * 把这个不等式进行变形就得到∑(v[i]-x*w[i])>=0，因此，可以对(v[i]-x*w[i])的值进行排序贪心地进行选取。
- * 因此就变成了C(x)=(v[i]-x*w[i])从大到小排列中的前k个的和不小于0
- */
-/* 收斂的方式有兩種
- * (1) train固定的回合數，和 ESP無關(和時間有關)
- * (2) 定收斂條件：r-l>=esp，注意esp和題目要求的精準度相關(需要人為調整)
+/* 題目給定Ｎ件物品的重量和價值，對於每件物品只能選或不選，每次查詢時會要求要選定Ｋ個時輸出最大的平均值？
+ * 
+ * 解題關鍵：二分法
+ * 問題點 :(Ｘ) 物品數量最多 1000 個，不可能針對物品枚舉選或不選
+ *        (Ｘ) 背包問題的動態規劃解法也無法套用(如何定義狀態？)
+ *        (Ｘ) 貪婪法：從平均值高的物品開始挑
+ *        (Ｏ) 如何應用二分法的"單調性"在最大平均值(猜平均值，猜的太高或是太低)
+ * Ｃ(ｘ):= 可以選擇使得單位重量的價值不小於ｘ，因此原本的問題可以視為時最大化Ｃ(ｘ)。
+ * 假設我们選了某些物品的集合Ｓ，單位重量的價值的計算方式：∑ｖ[i]/∑ｗ[i], ｉ∈Ｓ，
+ * 判斷是否存在一組集合Ｓ大於等於猜測值Ｃ(ｘ)，滿足 ∑ｖ[i]/∑ｗ[i] ≧ Ｃ(ｘ) ... ∑(ｖ[i]-Ｃ(ｘ)×ｗ[i]) ≧ ０
+ * 上述的不等式可以針對每組的ｖ[i]-Ｃ(ｘ)×ｗ[i]，從大到小選出前Ｋ個的和不小於０。
  */
 #include<bits/stdc++.h>
 using namespace std;
 
-// 精準度最好預留一位，題目是對小數點第2位四捨五入，第3位會有影響性，所以最低的精準度要訂到e-4
-const double ESP=1e-4;
-int N, K;
-int w[1000];
-int v[1000];
-double val[1000], sum;
-bool test(double d){
-  for(int i=0;i<N;i++)
-    val[i]=v[i]-d*w[i];
-  sort(val,val+N);
-  sum=0.0;
-  for(int i=0;i<K;i++) //只要最大的前M個加總大於0即可
-    sum+=val[N-1-i];
-  return sum>=-ESP;
+const double ESP=1e-6;
+const int MaxN=1e3;
+const int MaxQ=50;
+int N, Q, K;
+int w[MaxN];
+int v[MaxN];
+double rem[MaxN];
+inline bool challenge(double testD){
+	for(int i=0;i<N;i++)
+		rem[i]=v[i]-testD*w[i];
+	sort(rem,rem+N);
+	double sumD=0.0;
+	for(int i=1;i<=qv;i++)
+		sumD+=rem[N-i];
+	return sumD>=-ESP;
 }
 int main(){
-
-  for(int M;scanf("%d %d",&N,&M)==2;){
-    double maxD=0.0, minD=100000000.0, nowD;
-    for(int i=0;i<N;i++){
-      scanf("%d %d",&w[i],&v[i]);
-      nowD=v[i], nowD/=w[i];
-      maxD=max(maxD,nowD);
-      minD=min(minD,nowD);
-    }
-    while(M--){
-      scanf("%d",&K);
-      // 左右邊界一定是性價比最低和最高(快速收縮)
-      double nL=minD, nR=maxD, nM;
-      while(nR-nL>ESP){
-        nM=(nL+nR)/2.0;
-        (test(nM))? nL=nM: nR=nM-ESP;
-      }
-      printf("%.2lf\n",nL);
-    }
-  }
+	double minD=2e9;
+	double maxD=0.0;
+	
+	scanf("%d %d\n",&N,&Q);
+	for(int i=0;i<N;i++){
+		scanf("%d %d\n",&w[i],&v[i]);
+		double nowD=1.0*v[i]/w[i];
+		minD=min(minD,nowD);
+		maxD=max(maxD,nowD);
+	}
+	while(Q-->0){
+		scanf("%d\n",&K);
+		double nL=minD;
+		double nR=maxD;
+		double ans;
+		while(nR-nL>=ESP){
+			double nM=(nL+nR)/2.0;
+			if( challenge(nM) )
+				nL=nM+ESP, ans=nM;
+			else
+				nR=nM-ESP;
+		}
+		printf("%.2lf\n",ans);
+	}
 }

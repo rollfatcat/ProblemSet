@@ -1,40 +1,41 @@
-// 二分搜尋法的應用題型：搜尋可能的最佳化分配問題：等同基地台覆蓋
-// 題解說明：http://squall.cs.ntou.edu.tw/cprog/content/10b1%20Binary%20search%20and%20applications_bw.pdf
+/* 題目給定Ｎ個露營區的半徑和Ｋ頂帳篷，帳篷排列在露營區圓周且相距等寬，在最大化相距寬度的前提下輸出每個營區擺放的帳篷數量？
+ * 解題關鍵：二分法
+ *    猜測值＝間隔寬度
+ *    單調性：間隔越寬能放的帳篷越少，反之間隔越窄放的帳篷越多
+ *    滿足放滿Ｋ頂帳篷的前提下找到最大的間隔寬度，之後依照題目要求計算每個營區能放的帳篷數量。
+ */
 #include<bits/stdc++.h>
 using namespace std;
 
+const double ESP=1e-6;
 const double PI=acos(-1);
-const double ESP=1e-4;
+const int MaxN=10;
+int N, K;
+double R[MaxN];
 
-int N, M;
-double Round[50];
-inline bool test(double interval,int cnt=0){
-  for(int i=0;i<N;i++)
-    cnt+=(int)(Round[i]/interval);
-  return cnt>=M;
+inline bool challenge(double testR,int cnt=0){
+	for(int i=0;i<N;i++)
+		cnt+= R[i]/testR;
+	return cnt>=K;
 }
 int main(){
-  ios::sync_with_stdio(0),
-  cin.tie(0), cout.tie(0);
-
-  while(cin>>N>>M and N){
-    double minR=1<<30;
-    double maxR=0;
-    for(int i=0;i<N;i++)
-      cin>>Round[i],
-      Round[i]*=2.0*PI,
-      minR=min(minR,Round[i]),
-      maxR=max(maxR,Round[i]);
-
-    double nL=(double)minR/(M-N+1);
-    double nR=maxR, nM;
-    while(nR-nL>=ESP)
-      nM=(nL+nR)/2.0,
-      (test(nM))? nL=nM: nR=nM-ESP;
-
-    for(int i=0;i<N;i++)
-      cout<<(int)(Round[i]/nL)<<' ';
-    cout<<'\n';
-
-  }
+	while(scanf("%d %d\n",&N,&K)!=EOF and N>0){
+		for(int i=0;i<N;i++){
+			scanf("%lf",&R[i]);
+			R[i]*=2.0*PI;
+		}
+		double nL=0.0;
+		double nR=INT_MAX;
+		double ans;
+		while(nR-nL>=ESP){
+			double nM=(nL+nR)/2.0;
+			if( challenge(nM) )
+				nL=nM+ESP, ans=nM;
+			else
+				nR=nM-ESP;
+		}
+		for(int i=0;i<N;i++)
+			printf("%d ",(int)(R[i]/ans));
+		putchar('\n');
+	}
 }
