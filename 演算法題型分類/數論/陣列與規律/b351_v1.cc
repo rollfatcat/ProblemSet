@@ -1,27 +1,31 @@
-// 此題有規則解(0ms)，可以和c519一起看，但也可以用簡單模擬(0.6s)
-/* 規則寫得很複雜...，但概括就是往左上移動，超過邊界就overflow
- * 直到這一整個斜條都被填滿往下一斜條填
+/* 題目給定邊長Ｎ的矩陣和Ｒ、Ｃ的位置，輸出依據"規則填寫的陣列位置"數字是多少？
+ * 規則：
+ * 		數字１從第１個 Row 的中間位置開始填寫。
+ * 		每次向"左上方"填入下個數字(若超過邊界時則從一側繼續)直到遇到格子填寫過。
+ * 		若下個位置是填寫過的狀態則改由目前位置的下一格重複剛剛的流程。
+ * 解題關鍵：根據填寫規則 和 邊長必定是奇數 推測規律。
  */
 #include<bits/stdc++.h>
 using namespace std;
 
+int MaxCaseT=9;
+int MaxN=4999;
 int main(){
-  int T, N, tR, tC;
-  for(scanf("%d",&T);T--;){
-    scanf("%d %d %d",&N,&tR,&tC), tR--, tC--;
-    // ---先計算落在哪一條直線上，直線範圍是(-N/2,N/2)---
-    int coff=tC-tR, hN=N>>1;
-    if(coff> hN) coff-=N;
-    if(coff<-hN) coff+=N;
-
-    int x=0, y=hN;
-    for(int t=0;t<hN-coff;t++)
-      x=(x+2)%N, y=(y+1)%N;
-    int num=1+(hN-coff)*N;
-    while(x!=tR and y!=tC)
-      num++,
-      x=(x)?(x-1):(N-1),
-      y=(y)?(y-1):(N-1);
-    printf("%d\n",num);
-  }
+	int caseT, N, R, C;
+	scanf("%d\n",&caseT);
+	while(caseT-->0){
+		scanf("%d %d %d\n",&N,&R,&C);
+		
+		int hN=N>>1;
+		int slash=R-C;
+		if(slash> hN) slash-=N;
+		if(slash<-hN) slash+=N;
+		
+		int cycle=slash+hN;
+		int start_c=hN+1+cycle;
+		if(start_c>N) start_c-=N;
+		
+		int step=(start_c<C)? start_c+N-C: start_c-C;
+		printf("%d\n",1+cycle*N+step);
+	}
 }
