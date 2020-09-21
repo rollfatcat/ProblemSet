@@ -1,46 +1,56 @@
-// 紀錄的方式類似BIT＋掃描線作法，作法類似『莫隊』算法
-// 單看一下會以為需要什麼演算法，沒有就直接模擬夾子移動(枚舉每一格的情況)
-// 將娃娃視為兩個端點分別紀錄在nL和nR兩個陣列，而不是一個線段來檢測覆蓋情況
-#include<iostream>
-#include<cstring>
+/* 給定夾子長度Ｙ和Ｎ隻娃娃的起終點，輸出能夾到最多娃娃的個數和所有位置的數量？
+ * 夾子夾到某個娃娃的定義：娃娃的起點和終點都落在夾子的左右端點內(相等也算)
+ * 解題關鍵：掃描線，將一個娃娃視為起點和終點(左端點一離開該娃娃起點時-1，右端點碰到該娃娃終點時+1)
+ * 問題點：終止條件＝紀錄最後一個終點的位置，該位置之後娃娃的數量只減不增。
+ */
+#include<bits/stdc++.h>
 using namespace std;
+ 
+const int MaxN=3e4;
+const int MaxY=3e4;
+const int MaxX=1e5;
+/* 夾子 */
+int add[MaxX+MaxY+1];
 
-int nL[100001]={}, nR[100001]={};
-inline bool scanInt(int &x){char c;for(x=0;(c=getchar())>='0' and c<='9';x=(x<<3)+(x<<1)+c-'0');return c!=EOF;}
 int main(){
-  for(int N,L; scanInt(N) and scanInt(L);){
-    memset(nL,0,sizeof(nL));
-    memset(nR,0,sizeof(nR));
-    int maxR=0; // 紀錄右邊界的上限
-    for(int i=0,x,y;i<N;i++){
-      scanInt(x),
-      scanInt(y);
-      if(y-x>L)//娃娃的寬度大於夾子(無法夾起就不紀錄)
-        continue;
-      nL[x]++,
-      nR[y]++;
-      maxR=max(maxR,y);
-    }
-    int cnt_inL=0, cnt_max=0, ans_num=0;
-    // 當夾子的左端點在位置0的時候，
-    // 直接統計落在夾子右端點內所有的娃娃(娃娃右端點也落在夾子右端點)
-    for(int i=1;i<=L;i++)
-      cnt_inL+=nR[i];
-    // 題目定義：夾子的範圍涵蓋娃娃大小=夾起，夾子的範圍(ed-L,ed)有(L+1)個整數
-    // 枚舉每個位置移動(線性搜索)
-    for(int ed=L+1;ed<=maxR;ed++){
-      cnt_inL+=nR[ed];
-      if(cnt_max<cnt_inL) // 更新最佳的夾取地點上限，且此時個數＝1
-        cnt_max=cnt_inL,
-        ans_num=1;
-      else if(cnt_max==cnt_inL) // 目前可夾取的數量等於最佳的夾取地點，且此時個數+1
-        ans_num++;
-      cnt_inL-=nL[ed-L];
-    }
-    // 夾子可以繼續往右邊移動(娃娃機的右邊界是無限的)不過 nR[x]都是0，所以就不計算只扣除nL[x]
-    for(int st=maxR+1-L;st<=maxR and cnt_inL==cnt_max; st++)
-      ans_num++,
-      cnt_inL-=nL[st];
-    printf("%d %d\n",ans_num,cnt_max);
+  int N, Y, A, B;
+  while(scanf("%d %d\n",&N,&Y)!=EOF){
+  	memset(add,0,sizeof(add));
+  	/* 紀錄最後一個終點的位置，該位置之後娃娃的數量只會減少(作為停止條件) */
+    int maxB=0;
+  	while(N-->0){
+  		scanf("%d %d\n",&A,&B);
+  		/* 該娃娃的長度超過夾子長度＝無論如何都無法夾起 */
+      if(B-A>Y) continue;
+  		/* 掃描線(夾子右端點)經過Ｂ點，能夠夾的娃娃數量
+       * 掃描線(夾子左端點)經過Ａ點＝掃描線(夾子右端點)經過(Ａ+Ｙ+１)，需要扣除掉起點是Ａ的娃娃數量*/
+      add[B]++;
+  		add[A+Y+1]--;
+  		maxB=max(maxB,B);
+  	}
+ 
+  	int now_cnt=0;
+  	int ans_cnt=0;
+  	int ans_num=0;
+  	int scanline=1;
+    /* 掃描線小於等於夾子長度都屬於當夾子在１時可以抓到的娃娃數 */
+  	while(scanline<=Y)
+  		now_cnt+=add[scanline++];
+  	/* 枚舉夾子的位置從 左端點在１(右端點在Ｙ+１)直到右端點碰到最後一個終點 */
+    while(scanline<=maxB){
+  		now_cnt+=add[scanline++];
+  		if(ans_cnt<now_cnt)
+  			ans_cnt=now_cnt,
+  			ans_num=0;
+  		if(ans_cnt==now_cnt)
+  			ans_num++;
+  	}
+    /* 因為題目要求輸出能夠夾到最多娃娃的所有位置個數，
+     * 所以從最後一個終點開始往後算且此時的娃娃數量＝最多的娃娃數時則繼續需要繼續移動夾子。
+     */
+  	if(ans_cnt==now_cnt)
+  		while(add[scanline++]==0)
+  			ans_num++;
+  	printf("%d %d\n",ans_num,ans_cnt);
   }
 }

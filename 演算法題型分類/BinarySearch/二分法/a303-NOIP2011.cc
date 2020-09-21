@@ -37,13 +37,13 @@ inline int NextOpt(int W){
 			PreSv[i] =PreSv[i-1];
 			PreCnt[i]=PreCnt[i-1];
 		}
-  /* 累加每段區間內重量大於等於Ｗ的物品價值總和及數量 */
+  	/* 累加每段區間內重量大於等於Ｗ的物品價值總和及數量 */
 	long nowS=-S;
 	for(int i=0;i<M;i++)
-		nowS+=(PreCnt[qR[i]]-PreCnt[qL[i]-1])*(PreSv[qR[i]]-PreSv[qL[i]-1]);
+		nowS+=( PreCnt[qR[i]]-PreCnt[qL[i]-1] )*( PreSv[qR[i]]-PreSv[qL[i]-1] );
 	/* 收斂過程中取最小差距(絕對值) */
-  ansS=min(ansS,abs(nowS));
-  /* 大於Ｓ或小於Ｓ決定收縮方向 */
+	ansS=min(ansS,abs(nowS));
+	/* 大於Ｓ或小於Ｓ決定收縮方向 */
 	return (nowS<0)? -1: nowS>0;
 } 
 int main(){
