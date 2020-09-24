@@ -1,20 +1,25 @@
-// 第x天時N台機器的產值是 ƒ(x)=N(x-2N+2) 塊餅乾。
-// 題目要求最大化ƒ(x) => 一次微分找極點(落在整數) => x=4N-2
-// 測資輸入說明有誤(要讀取直到沒有輸入為止，caseT沒作用= =)
-
-#include<iostream>
+/* 一開始有１台機器，機器產量是每日１塊餅乾且可以添購新機器來增加產量但每購買一台需要多花一塊餅乾(第ｎ台耗費ｎ塊)
+ * 但購買的當天機器需要安裝，所以無法產出，問第ｘ天時餅乾最多的總量？
+ * 解題關鍵：(1)暴力法找最大值 (2)微分
+ * 第ｘ天時Ｎ台機器的產值是 ƒ(N)＝N(x-2N+2) 塊餅乾，已知ｘ時，maximize{ ƒ(N)} 
+ * 極值存在一次微分斜率＝０時，因為Ｎ是整數所以極點若不是整數時則取最近的值 → x=4N-2
+ */
+#include<bits/stdc++.h>
 using namespace std;
 
 int main(){
-  ios::sync_with_stdio(0),
-  cin.tie(0), cout.tie(0);
-
-  int caseT, xDay, Num;
-  cin>>caseT;
-  while(cin>>xDay){
-    Num=(xDay+2)>>2;
-    Num=Num+(xDay-(Num<<2)>0);
-    cout<<Num*(xDay-2*Num+2)<<'\n';
+  int caseT, xDay, dN;
+  scanf("%d\n",&caseT);
+  while(caseT-->0){
+    scanf("%d\n",&xDay);
+    /*
+    dN=(xDay+2)>>2;
+    ans=dN*(xDay-2*dN+2);
+    */
+    int ans_max=xDay;
+    for(int dN=2; xDay-2*dN>=2;dN++)
+      ans_max=max(ans_max,dN*(xDay-2*dN+2));
+    printf("%d\n",ans_max);
   }
 }
 
