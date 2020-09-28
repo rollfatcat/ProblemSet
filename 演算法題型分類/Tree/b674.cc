@@ -27,11 +27,11 @@ int main(){
   	for(int i=0;i<edge_cnt;i++){
   		scanf("%d %d",&u,&v);
   		/* Lazy Update */
-      if(lazy[u]<caseI) lazy[u]=caseI, root[u]=u, node_cnt+=1;
+      	if(lazy[u]<caseI) lazy[u]=caseI, root[u]=u, node_cnt+=1;
   		if(lazy[v]<caseI) lazy[v]=caseI, root[v]=v, node_cnt+=1;
   		/* 檢查：ｖ的父節點已經指向其他點 或是 存在一條邊自己指向自己
-       * 檢查條件未觸發時ｖ的父節點指向ｕ的根節點 
-       */
+         * 檢查條件未觸發時ｖ的父節點指向ｕ的根節點 
+         */
   		twoRoot|= u==v or root[v]!=v;
   		root[v]=FindRoot(u);
   	}
