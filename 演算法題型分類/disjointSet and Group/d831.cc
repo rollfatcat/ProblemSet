@@ -1,39 +1,35 @@
-// 查並問題
-// 假設兩個號碼屬於不同群就合併(將數量少的指向數量多的並比較數量最多的群)
-// 假設兩個號碼屬於同一群，Do Nothing
+/* 給定Ｎ個景點編號和Ｍ個相鄰的關係，輸出一次行程最多能去玩的景點數？
+ * 關係：(Ａ,Ｂ)代表兩個地點相鄰可以並在同一個行程。
+ * 解題關鍵：查並集(裸題)
+ * 輸出最多數字最多的群。
+ */
 #include<bits/stdc++.h>
 using namespace std;
-
-int p[1000001];
-int n[1000001];
-int GetP(int x){ return(p[x]==x)? x: p[x]=GetP(p[x]); }
+ 
+const int MaxN=1e6;
+const int MaxM=1e5;
+int root[MaxN];
+int num[MaxN];
+ 
+int FindRoot(int x){ 
+	return (root[x]==x)? x: root[x]=FindRoot(root[x]); }
 int main(){
-  int N, M, a, b;
-
-  while(scanf("%d%d",&N,&M)==2){
+	int N, M, u, v;
+	while(scanf("%d %d\n",&N,&M)!=EOF){
+		/* 初始化 */
     for(int i=0;i<N;i++)
-      p[i]=i, n[i]=1;
-    int maxv=1;
-    while(M--){
-      scanf("%d%d",&a,&b);
-      int pa=GetP(a);
-      int pb=GetP(b);
-      if(pa==pb) continue;
-      if( n[pa]>=n[pb] )
-        p[pb]=pa, n[pa]+=n[pb], maxv=max(maxv,n[pa]);
-      else
-        p[pa]=pb, n[pb]+=n[pa], maxv=max(maxv,n[pb]);
-    }
-    printf("%d\n",maxv);
-  }
+      root[i]=i, num[i]=1;
+    /* FIND & UNION */
+		int max_num=1;
+		while(M-->0){
+			scanf("%d %d\n",&u,&v);
+			int root_u=FindRoot(u);
+			int root_v=FindRoot(v);
+			if(root_u==root_v) continue;
+			root[root_v]=root_u;
+			num[root_u]+=num[root_v];
+			max_num=max(max_num,num[root_u]);
+		}
+		printf("%d\n",max_num);
+	}
 }
-/*
-6 4
-0 1
-2 3
-1 3
-5 4
-1000000 0
-1000000 1
-0 999999
-*/

@@ -1,5 +1,7 @@
-// 模擬的過程類似查並集時找Root
-// 題解：https://home.gamer.com.tw/creationDetail.php?sn=4278960
+/* 輸出讓 QuickSort 退化成 Ｏ(N2) 的數列
+ * 模擬的過程類似查並集時找Root
+ * 題解：https://home.gamer.com.tw/creationDetail.php?sn=4278960
+ */
 #include<bits/stdc++.h>
 using namespace std;
 

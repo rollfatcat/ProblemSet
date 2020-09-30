@@ -1,37 +1,31 @@
+/* 給定Ｎ位同學(編號１到Ｎ)和Ｍ段關係，輸出不同的宗教個數(群數)？
+ * 關係(Ａ,Ｂ) 代表編號Ａ和編號Ｂ同學信奉同一個宗教，不存在關係＝信奉不同宗教
+ * 解題關鍵：查並集
+ * 注意事項：輸入結束並不是０,０而是 EOF
+ */
 #include<bits/stdc++.h>
 using namespace std;
-
-const int maxN=5e4+1;
-int N, parent[maxN], cnt[maxN];
-// ---測資間數字的空白可能不只一個，也可能參雜換行---
-inline bool scanInt(int &x){
-  char c;
-  while((c=getchar())==' ' or c=='\n');
-  for(x=c-'0';(c=getchar())>='0' and c<='9';x=(x<<3)+(x<<1)+c-'0');
-  return c!=EOF;
-}
-int find_parent(int x){
-  if(parent[x]!=x)
-    parent[x]=find_parent(parent[x]);
-  return parent[x];
-}
+ 
+const int MaxN=5e4;
+int root[MaxN+1];
+ 
+int FindRoot(int x){ 
+	return (root[x]==x)? x: root[x]=FindRoot(root[x]); }
 int main(){
-  for(int M,caseN=1; scanInt(N) and scanInt(M) and N;caseN++){
-    for(int i=1;i<=N;i++)
-      parent[i]=i, cnt[i]=1;
-    int groupCnt=N;
-    for(int a,b; M--;){
-      scanInt(a), scanInt(b);
-      int Pa=find_parent(a),
-          Pb=find_parent(b);
-      // ---不同群 => Union---
-      if(Pa!=Pb){
-        groupCnt--;
-        if(Pa>Pb) // ---預設指向數字小的當作Parent---
-          Pa^=Pb^=Pa^=Pb;
-        parent[Pb]=Pa, cnt[Pa]+=cnt[Pb];
-      }
-    }
-    printf("Case %d: %d\n",caseN,groupCnt);
-  }
+	int N, M, u, v;
+	for(int caseI=1;scanf("%d %d\n",&N,&M)!=EOF;caseI++){
+		for(int i=1;i<=N;i++)
+      root[i]=i;
+
+		int Group=N;
+		while(M-->0){
+			scanf("%d %d\n",&u,&v);
+			int root_u=FindRoot(u);
+			int root_v=FindRoot(v);
+			if(root_u==root_v) continue;
+			root[root_v]=root_u;
+			Group--;
+		}
+		printf("Case %d: %d\n",caseI,Group);
+	}
 }
