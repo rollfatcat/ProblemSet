@@ -1,79 +1,82 @@
-// 查並集的應用
-/* 題目問說是否能左右相連，但是反過來則是上下邊界是否會從不相連變成相連。
- * 多設兩個虛點，我們假想所有上界點都與虛上點相連，下界點都與虛下點相連，
- * 每次一次加入一個障礙物時，檢查九宮格內是否會造成上下虛點相連，
- * 這裡必須先偷看并查集的結果，隨後在考慮是否將其相連。
- * (1) 父節點的二維位置(轉為一維座標後較方便記錄)
- * (2) use[x][y]=caseN 這個陣列標記紀錄的是這位置是第幾次case用到的
+/* 給定Ｒ×Ｃ的地圖和Ｎ個陷阱座標，當給定新的陷阱時是否違反「規則」輸出對應的字串和是否放入新陷阱？
+ * 規則：放入新陷阱後會導致無法從左側移動(上下左右)到右側時輸出 >_<，並且這個陷阱視為不存在，反之輸出 <(_ _)> 並記錄。
+ * 題目保證每個陷阱座標最多只會被放一次，且陷阱的座標範圍(X,Y)落在(0,1000)內。
+ * 解題關鍵：狀態設定，查並集
+ * 無法從左側移動(上下左右)到右側＝新放入陷阱後導致上下連通 ... 如何偵測上下連通？
+ *    新的陷阱座標周圍８格內存在其他陷阱(至少一個連通上、一個連通下 ... 查並集偵測該座標的陷阱屬於哪個群？)
+ *    狀態設定：周圍的陷阱需要紀錄屬於哪個群(若該格子不存在陷阱，群的編號＝-1) ... Ｏ(1)的 check
+ * 放入新陷阱後要將不同的群做 Union 。
  */
 #include<bits/stdc++.h>
 using namespace std;
 
-const int MAXN=1001;
-const int dx[8]={-1,-1,-1, 0, 0, 1, 1, 1};
-const int dy[8]={-1, 0, 1,-1, 1,-1, 0, 1};
-int parent[MAXN*MAXN];
-int wght[MAXN*MAXN];
-struct NODE{
-  int x, y, p;
-  NODE(int a=0,int b=0,int c=0):x(a),y(b),p(c){}
-}now, nxt[8];
-int use[MAXN][MAXN];
+const int MaxR=1e3;
+const int MaxC=1e3;
+const int MaxN=1e6;
+int toID[MaxR][MaxC];
+int root[MaxN];
+int R, C, N;
 
-inline int GetP(int x){ return(parent[x]==x)? x: parent[x]=GetP(parent[x]); }
-inline void unite(int x,int y){
-  x=GetP(x),
-  y=GetP(y);
-  if(x==y) return; // 同個父節點時就不Merge
-  if(wght[x]>=wght[y]) wght[x]+=wght[y], parent[y]=x;
-  else                 wght[y]+=wght[x], parent[x]=y;
+/* 檢測該陷阱屬於哪群 */
+inline int FindRoot(int now){ 
+	return (root[now]==now)? now: root[now]=FindRoot(root[now]);}
+/* 周圍８格位置的偏移量和該位置找到的群 */
+int dx[8]={-1,-1,-1, 0, 0, 1, 1, 1};
+int dy[8]={-1, 0, 1,-1, 1,-1, 0, 1};
+int neighbor[8];
+
+/* 先處理超過邊界的情況：(1)(2)(3)，再根據位置是否存在其他陷阱做討論：
+ * 指向自己是因為做 Union 時不會觸發。
+ * (1)超過左右邊界＝該格不存在＝指向自己
+ * (2)超過上界＝該格與上界連通＝指向０(代表上界)
+ * (3)超過下界＝該格與下界連通＝指向１(代表下界)
+ * (4)位置未超過邊界時檢查這個座標是否存在其他陷阱，是則輸出該陷阱代表的群，否則指向自己。
+ */
+inline int GetID(int x,int y,int nowID){
+	if(y==-1 or y==C) return nowID;
+	if(x==-1) return 0;
+	if(x==R)  return 1;
+	return (toID[x][y]==-1)? nowID: FindRoot(toID[x][y]);
 }
-
+/* 優先偵測：放係新陷阱座標時是否會導致上下連通＝周圍８格的位置存在至少一個陷阱屬於上界且一個屬於下界
+ * 若會導致上下連通則該陷阱不能存在＝回傳 false 代表該行為失敗
+ * 若上述情況不存在，則該陷阱可以存在：這個座標標記為該陷阱的 ID 且將周圍８格不同的群做合併。
+ *    合併時以 ID 較小者為主，所以設定 Top＝０、Down＝１，出現順序越優先的陷阱能合併到的陷阱數量較多。
+ */
+inline bool CanPut(int x,int y,int nowID){
+	bool connect_top =0;
+	bool connect_down=0;
+	for(int i=0;i<8;i++){
+		neighbor[i]=GetID( x+dx[i], y+dy[i], nowID);
+		connect_top |= neighbor[i]==0;
+		connect_down|= neighbor[i]==1;
+	}
+	if(connect_top and connect_down) return false;
+	toID[x][y]=nowID;
+	root[nowID]=nowID;
+	for(int i=0;i<8;i++){
+		int root_a=FindRoot(nowID);
+		int root_b=FindRoot(neighbor[i]);
+		if(root_a==root_b) continue;
+		(root_a<root_b)? root[root_b]=root_a: root[root_a]=root_b;
+	}
+	return true;
+}
 int main(){
-  int R, C, Q;
-  for(int caseN=1;scanf("%d",&R)!=EOF;caseN++){
-    scanf("%d",&C);
-    scanf("%d",&Q);
-    // init
-    for(int i=0;i<R*C+10;i++)
-      parent[i]=i, wght[i]=1;
-    int Top=R*C+1, Down=R*C+2;
-
-    while(Q--){
-      scanf("%d %d",&now.x,&now.y),
-      now.p=now.x*C+now.y;
-      Top=GetP(Top),
-      Down=GetP(Down);
-
-      // 偵測8個鄰居點
-      int state=0;
-      for(int i=0;i<8;i++){
-        nxt[i]=NODE(now.x+dx[i],now.y+dy[i]);
-
-        // 超過左右邊界時，將父節指向自己
-        if(nxt[i].y<0 or nxt[i].y>=C){ nxt[i].p=now.p; continue; }
-        /* 超過上下邊界時分情況討論：
-         * (1)超過上界：Top
-         * (2)超過下界：Down
-         * (3)範圍內節點：若該節點這次的case標記的代表這格應該指向自己
-         */
-        if(0>nxt[i].x)      nxt[i].p=Top,  state|=1;
-        else if(nxt[i].x>=R)nxt[i].p=Down, state|=2;
-        else{
-          if(use[nxt[i].x][nxt[i].y]!=caseN){
-            nxt[i].p=now.p; continue;
-          }
-          nxt[i].p=nxt[i].x*C+nxt[i].y;
-        }
-      }
-
-      if(state==3) puts(">_<");
-      else{
-        puts("<(_ _)>");
-        for(int i=0;i<8;i++)
-          unite(now.p,nxt[i].p);
-        use[now.x][now.y]=caseN;
-      }
-    }
-  }
+	int x, y;
+	root[0]=0; 
+	root[1]=1;
+	while(scanf("%d %d %d\n",&R,&C,&N)!=EOF){
+		/* 初始化每格座標(該陷阱屬於群的編號)＝-1代表不存在陷阱 */
+    for(int i=0;i<R;i++)
+			for(int j=0;j<C;j++)
+				toID[i][j]=-1;
+    /* 因為０代表上界的群、１代表下界的群，所以放入的陷阱 ID 從２開始計算 */
+		for(int nowID=2; N>0; N--){
+			scanf("%d %d\n",&x,&y);
+			bool success=CanPut(x,y,nowID);
+			puts( success ?"<(_ _)>":">_<");
+			nowID+=success;
+		}
+	}
 }
