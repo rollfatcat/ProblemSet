@@ -6,7 +6,7 @@
  * 解題盲點：自己不一定會屬於自己編號的群體，如何實現操作２的"移除"。 
  * 操作１和３都是 DisjointSetUnion 會提供的功能。
  * 操作２：將Ｐ從原本所屬 set "移除"，"加入"Ｑ屬於的 set，如果Ｐ是根節點會出問題。
- *        將號碼Ｐ映射到屬於的 set，找到該 set 的代表：Ｐ -> team[P] -> FindRoot()。
+ *        將號碼Ｐ映射到屬於的 set，找到該 set 的代表：Ｐ -> team[P] -> FindRoot(team[P])。
  */
 #include<bits/stdc++.h>
 using namespace std;
