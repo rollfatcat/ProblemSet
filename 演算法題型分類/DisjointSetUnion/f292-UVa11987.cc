@@ -16,7 +16,7 @@ const int MaxM=1e5;
 int team[MaxN+1]; // team[A]=編號Ａ成員屬於的群體
 int root[MaxN+1]; // root[A]=編號Ａ群體的代表號碼
 int size[MaxN+1]; // size[A]=編號Ａ群體的成員人數
-int sumv[MaxN+1]; // sumv[A]=編號Ａ群體的號碼總和
+long sumv[MaxN+1]; // sumv[A]=編號Ａ群體的號碼總和
  
 int FindRoot(int x){ 
 	return (root[x]==x)? x: root[x]=FindRoot(root[x]); }
@@ -53,7 +53,7 @@ int main(){
 				case 3:
 					scanf("%d\n",&A);
 					root_A=FindRoot(team[A]);
-					printf("%d %d\n",size[root_A],sumv[root_A]);
+					printf("%d %ld\n",size[root_A],sumv[root_A]);
 			}
 		}
 	}
