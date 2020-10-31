@@ -19,12 +19,11 @@ int main(){
 	int N, mx, my;
  
 	while(scanf("%d",&N)!=EOF and N>0){
-		mx=my=0.0;
 		for(int i=0;i<N;i++)
-			scanf("%d %d\n",&node[i].x,&node[i].y),
-			mx+=node[i].x, my+=node[i].y;
+			scanf("%d %d\n",&node[i].x,&node[i].y);
+		/* 依照掃描線排序 */
 		sort(node,node+N,compare);
- 
+		/* 中心位置 */
 		mx=node[0].x+node[N-1].x;
 		my=node[0].y+node[N-1].y;
 		bool check=true;
