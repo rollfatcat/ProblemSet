@@ -8,7 +8,8 @@
  *      IsFriend(Ａ,Ｂ) and IsFriend(Ｂ,Ｃ) so IsFriend(Ａ,Ｃ)
  *       IsEnemy(Ａ,Ｂ) and  IsEnemy(Ｂ,Ｃ) so IsFriend(Ａ,Ｃ) ... An enemy of a friend is an enemy.
  * 解題關鍵： DisjointSetUnion twist
- *      每個市民有兩個狀態：紀錄自己的友好群體編號 和 敵對群體編號
+ *      預設 敵對群體編號＝自己編號＋Ｎ
+ * 		每個市民有兩個狀態：紀錄自己的友好群體編號 和 敵對群體編號
  *      設定關係 或是 確認關係時需要雙向確認(同屬相同友好群體 或是 擁有共同敵人)，其一符合即可。
  */
 #include<bits/stdc++.h>
