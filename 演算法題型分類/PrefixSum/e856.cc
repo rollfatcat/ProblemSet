@@ -19,32 +19,28 @@ int main(){
 	int x1, x2, y1, y2, z1, z2;
 	scanf("%d %d %d\n",&R,&C,&H);
 	// 題目保證數字不超過1e6且每個數值不超過1e3，所以區間和不超過1e9，可用 int 紀錄
-    int sum[R][C][H]; 
-	for(int r=0;r<R;r++)
-		for(int c=0;c<C;c++)
-			for(int h=0;h<H;h++)
-				scanf("%d",&sum[r][c][h]);
-	for(int r=1;r<R;r++)
-		for(int c=0;c<C;c++)
-			for(int h=0;h<H;h++)
-				sum[r][c][h]+=sum[r-1][c][h];
-	for(int c=1;c<C;c++)
+    int prS[R][C][H]; 
+	for(int h=0;h<H;h++)
 		for(int r=0;r<R;r++)
-			for(int h=0;h<H;h++)
-				sum[r][c][h]+=sum[r][c-1][h];
-	for(int h=1;h<H;h++)
-		for(int r=0;r<R;r++)
-			for(int c=0;c<C;c++)
-				sum[r][c][h]+=sum[r][c][h-1];
+			for(int c=0;c<C;c++){
+				scanf("%d",&prS[h][r][c]);
+				prS[h][r][c]+=((h>0)? prS[h-1][r][c]: 0)+
+				              ((r>0)? prS[h][r-1][c]: 0)+
+				              ((c>0)? prS[h][r][c-1]: 0)+
+				              ((h>0 and r>0 and c>0)? prS[h-1][r-1][c-1]: 0)-
+				              ((h>0 and r>0)? prS[h-1][r-1][c]: 0)-
+				              ((r>0 and c>0)? prS[h][r-1][c-1]: 0)-
+				              ((c>0 and h>0)? prS[h-1][r][c-1]: 0);
+			}
     // 原點座標＝(1,1,1)而紀錄的三維陣列原點座標是(0,0,0)，存取數值時需要做校正
 	for(scanf("%d\n",&Q);Q--;)
 		scanf("%d %d %d %d %d %d\n",&x1,&y1,&z1,&x2,&y2,&z2),
-		printf("%d\n",sum[x2-1][y2-1][z2-1]
-                    -( (x1==1)? 0:sum[x1-2][y2-1][z2-1] )
-                    -( (y1==1)? 0:sum[x2-1][y1-2][z2-1] )
-                    -( (z1==1)? 0:sum[x2-1][y2-1][z1-2] )
-                    +( (x1==1 or y1==1)? 0:sum[x1-2][y1-2][z2-1] )
-                    +( (x1==1 or z1==1)? 0:sum[x1-2][y2-1][z1-2] )
-                    +( (y1==1 or z1==1)? 0:sum[x2-1][y1-2][z1-2] )
-                    -( (x1==1 or y1==1 or z1==1)? 0:sum[x1-2][y1-2][z1-2]));
+		printf("%d\n",prS[x2-1][y2-1][z2-1]
+                    -( (x1==1)? 0:prS[x1-2][y2-1][z2-1] )
+                    -( (y1==1)? 0:prS[x2-1][y1-2][z2-1] )
+                    -( (z1==1)? 0:prS[x2-1][y2-1][z1-2] )
+                    +( (x1==1 or y1==1)? 0:prS[x1-2][y1-2][z2-1] )
+                    +( (x1==1 or z1==1)? 0:prS[x1-2][y2-1][z1-2] )
+                    +( (y1==1 or z1==1)? 0:prS[x2-1][y1-2][z1-2] )
+                    -( (x1==1 or y1==1 or z1==1)? 0:prS[x1-2][y1-2][z1-2]));
 }

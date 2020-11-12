@@ -28,8 +28,7 @@ int main(){
 		my=node[0].y+node[N-1].y;
 		bool check=true;
 		for(int i=1;check and i<(N>>1);i++)
-			check= (mx==node[i].x+node[N-1-i].x) and 
-						 (my==node[i].y+node[N-1-i].y);
+			check= (mx==node[i].x+node[N-1-i].x) and (my==node[i].y+node[N-1-i].y);
 		puts(check?"yes":"no");
 	}
 }
