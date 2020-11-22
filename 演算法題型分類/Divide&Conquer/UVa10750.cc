@@ -1,4 +1,4 @@
-// 類似 a638，只是輸出點對的中點座標(這題有多組姐的情況 ubug 答案不一定對)
+// 類似 a638，只是輸出點對的中點座標(這題有多組解的情況 ubug 答案不一定對)
 // 中文題目：http://unfortunatedog.blogspot.com/2013/07/10750-beautiful-points.html
 // 剪枝：Ｘ維度已經排序，所以單算Ｘ的距離差距大於最小值時就不需要繼續比對
 #include<bits/stdc++.h>

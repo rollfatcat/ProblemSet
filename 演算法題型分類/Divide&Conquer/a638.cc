@@ -1,36 +1,32 @@
-// ZJ-a583比較：當 N 很小時，可以用 N^2 作法
-// 題目已經保證：座標『已排序』且不會有重複的點
-// 解法是 Divide and Conquer，做法類似MergeSort
-#include<iostream>
-#include<cmath>
+/* 給定Ｎ個二維平面上的點座標(座標由Ｘ座標小到大排序且不會有重複的點)，輸出最近的兩點距離？
+ * 解題關鍵：座標已經排序 → 分治法(CDQ)
+ * 固定某個點時，該點若要和Ｘ座標間隔較遠的點計算距離時為最短距離的可能性越低 ... 從中間的點開始考慮
+ * 
+ */
+#include<bits/stdc++.h>
 using namespace std;
-#define INF 0x7fffffffffffffff
-
-struct nn{ long x, y; }node[3000000];
-long NodeDis(int a, int b){
-  return (node[a].x-node[b].x)*(node[a].x-node[b].x)+(node[a].y-node[b].y)*(node[a].y-node[b].y);
-}
-long NodeX(int a,int b){ return (node[a].x-node[b].x)*(node[a].x-node[b].x); }
-long Divide(int l,int r,long* dis){
-  if(l>=r) return INF;
-  if(l==r-1)  return NodeDis(l,r);
-  int m=(l+r)/2;
-  *dis=min(*dis,Divide(l,m,dis));
-  *dis=min(*dis,Divide(m+1,r,dis));
-  // Merge
-  for(int i=m; i>=l and NodeX(i,m)<*dis; i--)
-    for(int j=m+1; j<=r and NodeX(i,j)<*dis; j++)
-      *dis=min(*dis,NodeDis(i,j));
-  return *dis;
+ 
+const int MaxN=3e6;
+const int MaxP=1e7;
+int pos[MaxN][2];
+ 
+long DIS(long dx,long dy){ return dx*dx+dy*dy; }
+long CDQ(int L,int R,long &minD){
+  	if(L==R)   return LONG_MAX;
+	if(L+1==R) return DIS(pos[R][0]-pos[L][0],pos[R][1]-pos[L][1]);
+	int M=L+R>>1;
+	minD=min(minD,CDQ(  L,M,minD));
+	minD=min(minD,CDQ(M+1,R,minD));
+	for(int pL=M; pL>=L and DIS(pos[M+1][0]-pos[pL][0],0)<minD; pL-=1)
+		for(int pR=M+1; pR<=R and DIS(pos[pR][0]-pos[pL][0],0)<minD; pR+=1)
+			minD=min(minD,DIS(pos[pR][0]-pos[pL][0],pos[pR][1]-pos[pL][1]));
+	return minD;
 }
 int main(){
-  int N;
-  cin.sync_with_stdio(0), cin.tie(0), cout.tie(0);
-  cin>>N;
-  for(int i=0;i<N;i++)
-    cin>>node[i].x>>node[i].y;
-  long dis=INF;
-  dis=Divide(0,N-1,&dis);
-  double ans=sqrt((double)dis);
-  printf("%.4lf",ans);
+	int N;
+	scanf("%d\n",&N);
+	for(int i=0;i<N;i++)
+		scanf("%d %d\n",&pos[i][0],&pos[i][1]);
+	long minD=LONG_MAX;
+	printf("%.4lf\n",sqrt(CDQ(0,N-1,minD)));
 }

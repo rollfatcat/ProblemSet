@@ -1,39 +1,53 @@
-// 解法是 Divide and Conquer，做法類似MergeSort
-#include<iostream>
-#include<vector>
-#include<algorithm>
+/* 給定Ｎ個二維平面的點，輸出每個點能「支配」的點數？
+ * 支配的定義：點Ｂ支配點Ａ＝Ax<Bx and Ay<By
+ * 解題關鍵：CDQ(偏維排序)
+ * 根據第一維度小到大排序，針對第二維度做分治法。
+ * 因為第一維度已經排序過，所有左半邊的第一維度一定會小於等於右半邊的第二維度
+ * 而合併時會保證第二維度小到大，所以從右半邊的數字加入"排序"時對應位置需要加上左半邊有多少數字小於他。
+ * 基於上述合併的特性，必須確保在排序第一維度數字相同時第二維度大到小，合併時才會優先處理(第一維度相同)第二維度較小者
+ */
+#include<bits/stdc++.h>
 using namespace std;
 
-int N, output[10000];
-struct nn{ int x, y, no, r; }node[10000], tmp[10000];
-bool compare(nn a,nn b){ return(a.x==b.x)?(a.y>b.y):(a.x<b.x); }
-void DivCon(int l,int r){
-  if(l>=r) return;
-  int m=(l+r)/2;
-  DivCon(l,m);
-  DivCon(m+1,r);
-  // Merge
-  int i=l, j=m+1, k=l, d=0;
-  while(i<=m and j<=r)
-    if(node[i].y<node[j].y) tmp[k++]=node[i++];
-    else  node[j].r+=(i-l), tmp[k++]=node[j++];
-  while(i<=m) tmp[k++]=node[i++];
-  while(j<=r) node[j].r+=(i-l), tmp[k++]=node[j++];
-  for(i=l; i<=r; i++)
-    node[i]=tmp[i];
+const int MaxN=1e4;
+int pos[MaxN][2];
+int ord[MaxN];
+int tmp[MaxN];
+int cnt[MaxN];
+
+bool compare(int a,int b){ 
+  return (pos[a][0]==pos[b][0])? pos[a][1]>pos[b][1]:pos[a][0]<pos[b][0]; }
+void CDQ(int L,int R){
+	if(L==R) return;
+	int M=L+R>>1;
+	CDQ(  L,M);
+	CDQ(M+1,R);
+	
+	int pL=L, pR=M+1;
+	int pM=L;
+	while(pL<=M and pR<=R){
+		if( pos[ord[pL]][1]<pos[ord[pR]][1] ){
+			tmp[pM++]=ord[pL++];
+		}else{
+			cnt[ord[pR]]+=pL-L;
+			tmp[pM++]=ord[pR++];
+		}
+	}
+	while(pL<=M)  tmp[pM++]=ord[pL++];
+	while(pR<=R)  cnt[ord[pR]]+=M-L+1, tmp[pM++]=ord[pR++];
+	
+	for(pM=L;pM<=R;pM+=1) ord[pM]=tmp[pM];
 }
 int main(){
-  ios::sync_with_stdio(0),
-  cin.tie(0), cout.tie(0);
-
-  while(cin>>N){
-    for(int i=0;i<N;i++)
-      cin>>node[i].x>>node[i].y, node[i].no=i, node[i].r=0;
-    sort(node,node+N,compare);
-    DivCon(0,N-1);
-    for(int i=0;i<N;i++)
-      output[node[i].no]=node[i].r;
-    for(int i=0;i<N;i++)
-      cout<<output[i]<<endl;
-  }
+	int N;
+	while(scanf("%d\n",&N)!=EOF){
+		for(int i=0;i<N;i++)
+			scanf("%d %d\n",&pos[i][0],&pos[i][1]),
+			ord[i]=i,
+			cnt[i]=0;
+		sort(ord,ord+N,compare);
+		CDQ(0,N-1);
+		for(int i=0;i<N;i++)
+			printf("%d\n",cnt[i]);
+	}
 }

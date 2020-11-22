@@ -22,7 +22,6 @@ int FindRoot(int x){
  
 int main(){
 	int opt, A, B;
- 
 	while(scanf("%d\n",&N)!=EOF){
 		/* 初始化：第ｉ位成員都是自己群體的代表且第ｉ位成員的敵對關係(第ｉ+Ｎ格)記錄為 ｉ+Ｎ */
         for(int i=0;i<(N<<1);i++)
@@ -38,28 +37,28 @@ int main(){
 			int root_eB=FindRoot(B+N);
 			switch(opt){
 				case 1: // SetFriend(A,B)
-					if(root_A==root_eB or root_B==root_eA)
+					if(root_A==root_eB)
 						puts("-1");
-					else if(root_A==root_B or root_eA==root_eB)
+					else if(root_A==root_B)
 						continue;
 					else
 						root[root_B]=root_A,
 						root[root_eB]=root_eA;
 					break;
 				case 2: // SetEnemy (A,B) 
-					if(root_A==root_eB or root_B==root_eA)
+					if(root_A==root_eB)
 						continue;
-					else if(root_A==root_B or root_eA==root_eB)
+					else if(root_A==root_B)
 						puts("-1");
 					else
 						root[root_eB]=root_A,
 						root[root_eA]=root_B;
 					break;
 				case 3: // Check relation of Friend
-					puts((root_A==root_B or root_eA==root_eB)? "1": "0");
+					puts((root_A==root_B)? "1": "0");
 					break;
 				case 4: // Check relation of Enemy
-					puts((root_A==root_eB or root_B==root_eA)? "1": "0");
+					puts((root_A==root_eB)? "1": "0");
 					break;
 			}
  
