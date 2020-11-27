@@ -1,4 +1,4 @@
-// 先講線性搜尋的做法再說利用 Disjoint-Set 來加速至 O(n㏒n) ：25ms
+// 先講線性搜尋的做法再說利用 Disjoint-Set 來加速至 O(n㏒n)
 /* Greedy : 每個工作都會佔走一天的時間所以就依照收益最高的優先做
  * 透過 Disjoint-set 來加速至 O(n㏒n)，remDay[i] 來記錄 deadline=i 時，可填的時間區間。
  * 每次填入後，代表此可行區間又少一個可填的，所以將它和上一個天數的區間合併
@@ -39,7 +39,7 @@ int main(){
 			/* 搜尋目前日期往前推算的第一個空檔 */
       		int nowDay=FindPreDay(data[i].due);
 			if(nowDay>0) 
-				preDay[nowDay]=FindPreDay(preDay[nowDay]-1), 
+				preDay[nowDay]=FindPreDay(nowDay-1), 
 				ans+=data[i].profit;
 		}
 		printf("%d\n",ans);

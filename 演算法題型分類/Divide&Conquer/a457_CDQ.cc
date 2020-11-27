@@ -1,14 +1,14 @@
-// 逆數對用 MergeSort 解 => CDQ想法
-
+/*
+ */
 #include<bits/stdc++.h>
 using namespace std;
 
-const int MAXN=100000;
+const int MaxN=1e5;
 int K, M;
 struct PAIR{
   int x,y;
   bool operator<(const PAIR &rhs)const{ return(x==rhs.x)?(y>rhs.y):(x>rhs.x); }
-}org[MAXN], cpy[MAXN];
+}org[MaxN], cpy[MaxN];
 
 long CDQ(int nL,int nR,long res=0){
   if(nL>=nR) return 0;
@@ -39,11 +39,3 @@ int main(){
   sort(org,org+K);
   printf("%ld\n",CDQ(0,K-1));
 }
-/*
-5 10
-3 7 5 5 8
-4 6 7 5 8
-5 10
-3 7 5 5 8
-4 6 7 7 7
-*/

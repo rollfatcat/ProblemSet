@@ -1,70 +1,43 @@
-// 類似 a638，只是輸出點對的中點座標(這題有多組解的情況 ubug 答案不一定對)
-// 中文題目：http://unfortunatedog.blogspot.com/2013/07/10750-beautiful-points.html
-// 剪枝：Ｘ維度已經排序，所以單算Ｘ的距離差距大於最小值時就不需要繼續比對
+/* 給定Ｎ個二維平面上的點座標，從中任選兩點和平面上某點形成最短距離(曼哈頓距離)的點座標？
+ * 解題關鍵：Sweep Line - Closest Pair
+ * 題目的要求的點必定落在形成最短距離點對的連線上(以下做法是輸出中點)
+ */
 #include<bits/stdc++.h>
 using namespace std;
-
-const int MAXN=10000;
-const int INF=1<<30;
-int mndist;
-double recx, recy;
-struct POINT{
-  int x, y;
-  bool operator<(const POINT &rhs)const{ return (x==rhs.x)?(y<rhs.y):(x<rhs.x); }
-}node[MAXN];
-
-inline int NodeDis(int a,int b){ return (node[a].x-node[b].x)*(node[a].x-node[b].x)+(node[a].y-node[b].y)*(node[a].y-node[b].y);}
-void CDQ(int nL,int nR){
-  if(nL==nR) return; // 分化到剩下一點時無法湊出配對
-  int nM=(nL+nR)>>1;
-  CDQ(  nL,nM);
-  CDQ(nM+1,nR);
-  // merge
-  for(int iL=nM; iL>=nL; iL--){
-    if((node[iL].x-node[nM].x)*(node[iL].x-node[nM].x)>=mndist) break;  // <-剪枝
-    for(int iR=nM+1; iR<=nR; iR++){
-      if((node[iL].x-node[iR].x)*(node[iL].x-node[iR].x)>=mndist) break;// <-剪枝
-      int v=NodeDis(iL,iR);
-      if(v<mndist){
-        mndist=v;
-        recx=(node[iL].x+node[iR].x)/2.0;
-        recy=(node[iL].y+node[iR].y)/2.0;
-      }
-    }
-  }
+ 
+const int MaxCaseT=10;
+const int MaxN=1e4;
+struct NODE{
+	int x, y;
+	NODE(int x=0,int y=0):x(x),y(y){}
+	bool operator<(const NODE &rhs)const{ return x<rhs.x; }
+} node[MaxN], ans;
+inline int dis(int dx,int dy){ return abs(dx)+abs(dy); }
+ 
+int CDQ(int L,int R,int& minD){
+	if(L==R) return INT_MAX;
+	int M=L+R>>1;
+	minD=min(minD,CDQ(  L,M,minD));
+	minD=min(minD,CDQ(M+1,R,minD));
+	for(int i=M;i>=L and (node[M+1].x-node[i].x)<minD;i-=1)
+		for(int j=M+1;j<=R and (node[j].x-node[i].x)<minD;j+=1)
+			if(dis(node[j].x-node[i].x,node[j].y-node[i].y)<=minD)
+				minD=dis(node[j].x-node[i].x,node[j].y-node[i].y),
+				ans=NODE(node[j].x+node[i].x,node[j].y+node[i].y);
+	return minD;
 }
+ 
 int main(){
-  int caseT, N;
-  scanf("%d",&caseT);
-  for(int caseN=0;caseN<caseT;caseN++){
-    scanf("%d",&N);
-    for(int i=0;i<N;i++)
-      scanf("%d",&node[i].x),
-      scanf("%d",&node[i].y);
-    sort(node,node+N);
-    //
-    mndist=INF;
-    CDQ(0,N-1);
-    //
-    if(caseN) puts("");
-    printf("%.3lf %.3lf\n",recx,recy);
-  }
+	int caseT, N, minD;
+	scanf("%d\n",&caseT);
+	while(caseT-->0){
+		scanf("%d\n",&N);
+		for(int i=0;i<N;i++)
+			scanf("%d %d\n",&node[i].x,&node[i].y);
+		sort(node,node+N);
+		minD=INT_MAX;
+		CDQ(0,N-1,minD);
+		printf("%.3lf %.3lf\n",ans.x/2.0,ans.y/2.0);
+		if(caseT) putchar('\n');
+	}
 }
-/*
-2
-4
-3 9
-8 11
-12 5
-12 14
-
-8
-4 5
-4 16
-5 1
-6 7
-8 18
-11 20
-16 14
-20 18
-*/
