@@ -9,49 +9,50 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-const int INF=1<<30;
 const int MaxC=1e2;
 const int MaxS=1e3;
 const int MaxQ=1e4;
-struct PATH{
-	int a, b, v;
-	PATH(int a=0,int b=0,int v=0):a(a),b(b),v(v){}
-	bool operator<(const PATH &rhs)const{ return v<rhs.v; }
-}path[MaxS];
 
+struct EDGE{
+	int a, b, v;
+} edge[MaxS];
 int root[MaxC+1];
-int load[MaxC+1][MaxC+1];
+int cost[MaxC+1][MaxC+1];
 vector<int> mebr[MaxC+1];
 
-int GetRoot(int x){ return (root[x]==x)? x: GetRoot(root[x]); }
+bool compare(EDGE a,EDGE b){ return a.v<b.v; }
+int FindRoot(int x){ 
+	return (root[x]==x)? x: root[x]=FindRoot(root[x]); }
 int main(){
-  int C, S, N, Q;
-  for(int caseI=1;scanf("%d %d %d\n",&C,&S,&Q) and C; caseI++){
-    for(int i=1;i<=C;i++){
-    	root[i]=i, mebr[i].assign(1,i);
-    	for(int j=1;j<=C;j++)
-    		load[i][j]=INF;
-    }
-    for(int i=0;i<S;i++)
-      scanf("%d %d %d\n",&path[i].a,&path[i].b,&path[i].v);
-    sort(path,path+S);
-    N=0;
-    for(int i=0;i<S;i++){
-    	int Ra=GetRoot(path[i].a);
-    	int Rb=GetRoot(path[i].b);
-    	if(Ra==Rb) continue;
-    	root[Rb]=Ra;
-    	for(int b:mebr[Rb])
-    		for(int a:mebr[Ra])
-    			load[a][b]=load[b][a]=path[i].v;
-    	for(int b:mebr[Rb])
-    		mebr[Ra].emplace_back(b);
-    	if(N++==C-1) break;
-    }
-    if(caseI>1) putchar('\n');
-    printf("Case #%d\n",caseI);
-    for(int a,b;Q--;)
-      scanf("%d %d\n",&a,&b),
-      (load[a][b]==INF)?puts("no path"):printf("%d\n",load[a][b]);
-  }
-}
+	int C, S, Q, a, b;
+	for(int caseI=1;scanf("%d %d %d\n",&C,&S,&Q) and C>0;caseI++){
+		for(int i=1;i<=C;i++){
+			fill(cost[i],cost[i]+C+1,INT_MAX);
+			cost[i][i]=0;
+			root[i]=i;
+			mebr[i].assign(1,i);
+		}
+		for(int i=0;i<S;i++)
+			scanf("%d %d %d\n",&edge[i].a,&edge[i].b,&edge[i].v);
+		sort(edge,edge+S,compare);
+		for(int i=0,e=0;i<S;i++){
+			int Ra=FindRoot(edge[i].a);
+			int Rb=FindRoot(edge[i].b);
+			if(Ra==Rb) continue;
+			for(int ca: mebr[Ra])
+				for(int cb: mebr[Rb])
+					cost[ca][cb]=cost[cb][ca]=edge[i].v;
+			
+			root[Rb]=Ra;
+			for(int cb: mebr[Rb])
+				mebr[Ra].push_back(cb);
+			if(++e==C-1)
+				break;
+		}
+		printf("Case #%d\n",caseI);
+		while(Q-->0)
+			scanf("%d %d\n",&a,&b),
+			(cost[a][b]==INT_MAX)? puts("no path"): printf("%d\n",cost[a][b]);
+		putchar('\n');
+	}
+} 
