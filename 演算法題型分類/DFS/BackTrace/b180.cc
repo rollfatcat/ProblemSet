@@ -9,7 +9,7 @@ int N, ANS;
 struct cc{
   int st,on;
   bool operator<(const cc other)const{return(st==other.st)?(on<other.on):(st<other.st);}
-} custom[60], tmp[60];
+} custom[60];
 int bike[60]; // bike[idx]:紀錄第idx輛腳踏車下一次回到出發站的時間
 void DFS(int now,int bike_n){
   if(now==N){
@@ -48,23 +48,3 @@ int main(){
     cout<<ANS<<'\n';
   }
 }
-/*
-11
-5 30
-40 30
-35 5
-15 10
-30 20
-10 40
-45 5
-50 5
-5 10
-35 5
-50 30
-5
-10 20
-20 30
-10 45
-10 50
-15 30
-*/
