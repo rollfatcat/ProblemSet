@@ -1,10 +1,12 @@
-// 題目只保證給予 1e5 個數字且範圍落在 int 以內(測資的數字含有負數) => 離散化
-// 逆數對的計算：CDQ解
+/* 給定Ｎ個數字，任選２個位置的數字能形成逆數對的個數？
+ * 解題關鍵：Divide & Conquer - Inversion Pair
+ */
 #include<bits/stdc++.h>
 using namespace std;
 
 const int MAXN=1e5+1;
-int org[MAXN], ord[MAXN];
+int org[MAXN];
+int ord[MAXN];
 inline bool scanInt(int &x){
   char c=getchar();
   bool sign=(c=='-');
@@ -24,7 +26,7 @@ long CDQ(int nL,int nR){
     else
       ord[iK++]=org[iL++];
   while(iL<=nM) ord[iK++]=org[iL++];
-  while(iR<=nR) ord[iK++]=org[iR++], out+=nM-iL+1;
+  while(iR<=nR) ord[iK++]=org[iR++];
   for(int i=nL;i<=nR;i++) org[i]=ord[i];
   return out;
 }

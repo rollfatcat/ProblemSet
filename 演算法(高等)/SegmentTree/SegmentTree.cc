@@ -1,4 +1,3 @@
-// 講解：https://tw.saowen.com/a/75296b0c98efbeee8b4efe2ac925548e9e25de5485752aab8f469818d8fd8bf8
 夜深人靜系列(7)：https://blog.csdn.net/WhereIsHeroFrom/article/details/78969718
 (1) 空間估計：SegmentTree的空間數等於zkw式線段樹，換句話說用 zkw 式的線段樹做空間預估
     假設原始資料的個數是 N ，最少需要 4N 的空間
