@@ -6,36 +6,44 @@
  *         (2)數值可能重複，若上側數列的數對關係為相等時應該不列入計算，
  *            所以當上側數列數值相等時需同時將下側數列由小到大(消去逆數對)
  */
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
- 
+
 const int MaxN=1e5;
-int data[MaxN][2];
-int ord[MaxN];
-int tmp[MaxN];
-long ans;
+int K, M;
+struct PAIR{
+  int x,y;
+  bool operator<(const PAIR &rhs)const{ return(x==rhs.x)?(y>rhs.y):(x>rhs.x); }
+}org[MaxN], cpy[MaxN];
 
-bool compare(int a,int b){ 
-	return (data[a][0]==data[b][0])? data[a][1]<data[b][1]: data[a][0]<data[b][0]; }
+long CDQ(int nL,int nR,long res=0){
+  if(nL>=nR) return 0;
+  // Divide 確保兩個子序列都維持單調棧
+  int nM=(nL+nR)>>1;
+  res+=CDQ(  nL,nM);
+  res+=CDQ(nM+1,nR);
+  // 合併兩個子序列，累計逆數對
+  for(int i=nL,j=nM+1,k=nL;i<=nM or j<=nR; )
+    if(j>nR or i<=nM and org[i].y>=org[j].y )
+      cpy[k++]=org[i++];
+    else
+      cpy[k++]=org[j++],
+      res+=nM-i+1;
+  for(int i=nL;i<=nR;i++)
+    org[i]=cpy[i];
+  return res;
+}
 
-void MergeSort(int nL,int nR){
-	if(nL==nR) return;
-	int nM=nL+nR>>1;
-	MergeSort(  nL,nM);
-	MergeSort(nM+1,nR);
-	int p[3]={nL,nM+1,nL};
-	while(p[0]<=nM and p[1]<=nR)
-		if(ord[p[0]]<=ord[p[1]])
-			tmp[p[2]++]=ord[p[0]++];
-		else
-			tmp[p[2]++]=ord[p[1]++],
-			ans+= nM-p[0]+1;
-	while(p[0]<=nM) 
-		tmp[p[2]++]=ord[p[0]++];
-	while(p[1]<=nR) 
-		tmp[p[2]++]=ord[p[1]++];
-	for(int i=nL;i<=nR;i++) 
-		ord[i]=tmp[i];
+int main(){
+  // 讀取輸入
+  scanf("%d %d",&K,&M);
+  for(int i=0;i<K;i++)
+    scanf("%d",&org[i].x);
+  for(int i=0;i<K;i++)
+    scanf("%d",&org[i].y);
+  // 排序，保證第一維度是由大到小(若第一維度相同時第二維度由大到小)
+  sort(org,org+K);
+  printf("%ld\n",CDQ(0,K-1));
 }
 
 int main(){
