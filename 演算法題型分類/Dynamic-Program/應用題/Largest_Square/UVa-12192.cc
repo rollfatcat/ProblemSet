@@ -8,33 +8,32 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-const int MAXN=501;
+const int MaxN=501;
 int R, C;
-int didx[MAXN<<1]; // 每條方程式的個數長度
-int diag[MAXN<<1][MAXN];
+int didx[MaxN<<1]; // 每條方程式的個數長度
+int diag[MaxN<<1][MaxN];
 
-inline bool scanInt(int &x){char c;for(x=0;(c=getchar())>='0' and c<='9';x=(x<<3)+(x<<1)+c-'0');return c!=EOF;}
 int main(){
 
-  while(scanInt(R) and scanInt(C) and R){
+  while(scanf("%d %d\n",&R,&C)!=EOF and R>0){
     memset(didx,0,sizeof(didx));
-    int slash;         // 當斜率的常數: slash=x-y，範圍調整(-C,R)=>(0,C+R)
+    int slash;         // 當斜率的常數: slash=x-y，範圍調整(1-C,R-1)=>(1,C+R-1)
     // 本來是存在ＲxＣ的長方形，改為轉45度的存法
     for(int i=0;i<R;i++)
-      for(int j=0;j<C;j++)
-        slash=i-j+C,
-        scanInt(diag[slash][didx[slash]++]);
-
+      for(int j=0;j<C;j++){
+        slash=i-j+C;
+        scanf("%d",&diag[slash][didx[slash]++]);
+      }
     int Q, L, U;
-    scanInt(Q);
+    scanf("%d",&Q);
     while(Q--){
-      scanInt(L),
-      scanInt(U);
+      scanf("%d %d\n",&L,&U);
       int maxL=0, nL, nR;
-      for(int i=0;i<R+C and did[x]>maxL;i++)
-        nL=lower_bound(diag[i],diag[i]+didx[i],L)-diag[i],
-        nR=upper_bound(diag[i],diag[i]+didx[i],U)-diag[i],
+      for(int i=1; i<R+C and didx[i]>maxL; i++){
+        nL=lower_bound(diag[i],diag[i]+didx[i],L)-diag[i];
+        nR=upper_bound(diag[i],diag[i]+didx[i],U)-diag[i];
         maxL=max(maxL,nR-nL);
+      }
       printf("%d\n",maxL);
     }
     puts("-");
