@@ -21,7 +21,11 @@ int main(){
          *       右括號 - Pop堆疊直到左括號出現，左括號也要 pop 掉
          *       +-×÷  - Pop堆疊直到空掉或者頂端的運算元權重低於目前的運算元。
          */
-		cout<<var;
+		// 判斷第一個字元是不是 '('
+		if(var[0]=='(')
+			opt.push('(');
+		else
+			cout<<var;
 		while(cin.get()==' '){
 			cin>>var;
 			switch(var[0]){
