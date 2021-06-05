@@ -1,6 +1,6 @@
 /* 給定Ｎ個蛋糕，能夠選取個數不超過Ｋ個蛋糕的總和最大值是多少？
  * 解題關鍵：前綴和＋單調列隊
- * 
+ * Kadane's algorithm : 連續區間和透過前綴和轉換成兩數相減
  */
 #include<bits/stdc++.h>
 using namespace std;

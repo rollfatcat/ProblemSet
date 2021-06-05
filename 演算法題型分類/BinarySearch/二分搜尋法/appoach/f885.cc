@@ -1,3 +1,7 @@
+/* 給定ａ和ｘ，輸出最小的ｎ使得 x ≤ a+(a+1)+(a+2)+...+(n-1)+n
+ * 解題關鍵：等差公式
+ * x ≤ a+(a+1)+(a+2)+...+(n-1)+n = n*(n+1)/2 - a*(a-1)/2
+ */
 #include<bits/stdc++.h>
 using namespace std;
 

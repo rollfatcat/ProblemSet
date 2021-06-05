@@ -1,6 +1,5 @@
 /* 給定Ｎ個數字，連續Ｋ個為一組時組內的最大值和最小值差不超過Ｇ的組合數量？
  * 解題關鍵：單調列隊
- * 
  */
 #include<bits/stdc++.h>
 using namespace std;
