@@ -3,7 +3,8 @@
  * 2 x : 將陣列中第 x 個位置的數值設定為０
  * 3   : 輸出陣列中第一個值是０的位置
  * 解題關鍵：MinHeap + LazyUpdate(惰性更新)
- * 維護陣列中數值是０的位置
+ * 維護陣列中數值是０的位置(儲存時為負數，利用 MaxHeap 輸出最小的數字)
+ * LazyUpdate : 因為 PriorityQueue 無法支援刪除容器內任意的數字，所以需要確認移除的數字(位置)是０
  */
 #include<bits/stdc++.h>
 using namespace std;

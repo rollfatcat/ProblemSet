@@ -1,6 +1,6 @@
 /* 給定一個數列(測資只有一筆，所以只要讀取到沒有數字即停止)
  * 要求依照輸入的數字順序輸出數列中出現的次數
- * Queen 維護輸入的順序，Map 紀錄對應的數量。
+ * Queue 維護輸入的順序，Map 紀錄對應的數量。
  */
 #include<bits/stdc++.h>
 using namespace std;

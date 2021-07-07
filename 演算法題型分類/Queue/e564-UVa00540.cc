@@ -1,61 +1,58 @@
-/* 分層架構的Queue(類似莫隊的分塊概念)
- * 用原本資料結構的佇列即可實現本題的資料結構（以下稱團體佇列）之特性。其中一個佇列，其排隊的單位為團體；而每個團體自己各自有一個佇列，其排隊單位則是人。
- * 每當要把人加入團體佇列時，先看該人所屬團體有無在團體佇列裡（可以用一個布林值表示團體的有無）。如果有就將該人放到所屬團體裡的佇列；沒有的話，就將該人的團體放進團體佇列尾端，並將該人放到團體的佇列裡。
- * 當要從團體佇列移出人時，先看團體佇列最前端的團體是何者。再從該團體的佇列移出該團體最前端的人。如果該團體的佇列已空，則代表該團體的成員都不在團體佇列裡，所以要從團體佇列中移出。
- * 進階題：ZJ-d718
+/* 模擬排隊(支援插隊)
+ * 插隊：Queue 中每個元素都屬於某個 team。檢查他的 teammates(同一team的元素)是否已經在 Queue 中。
+ * 如果是，它將排在他的 team 的最後一個。如果不是，它將排在Queue最後面。
+ * 解題關鍵：Queue In Queue
+ * mainQ : 維護加入 Queue 中的 teamQ (佇列編號)的順序
+ * teamQ : 維護加入 Queue 中的 element
+ * DEQUEUE = 移除 mainQ.front() 的佇列編號中最前面的 element，注意移除後 teamQ 空掉時也得一並從 mainQ 移除
+ * ENQUEUE = 加入這個 element 所屬的 teamQ 中，如果這個 teamQ 不存在 mainQ 時則把這個 teamQ 加入 mainQ 尾端
+ * 		輸入的 element 需要對映到他所屬的 teamQ ... map
  */
 #include<bits/stdc++.h>
 using namespace std;
 
 const int MaxN=1000; // N fot #Team
 const int MaxM=1000; // M for #member
-
-map<int,int> memo; // 0 ≤ xi ≤ 999999
-queue<int> teamQ;
-queue<int> Q[MaxN];
-bool InQ[MaxN];
-
 int main(){
 	int N, teamsz, member;
 	char ss[10];
-	for(int caseI=1;scanf("%d",&N) and N>0;caseI++){
-		if(caseI>1) putchar('\n');
-		printf("Scenario #%d\n",caseI);
-		// initial
-		memo.clear();
-		while(teamQ.empty()==0)
-			teamQ.pop();
-		for(int i=0;i<N;i++)
-			while(Q[i].empty()==0)
-				Q[i].pop();
-		fill(InQ,InQ+N,0);
+	for(int caseI=1; scanf("%d",&N) and N>0; caseI++){	
+		deque<int> mainQ;
+		deque<int> teamQ[N];
+		vector<bool> InQ(N);
+
+		// 記憶體上限為 64 MB，無法使用 2e7 格陣列空間
+		map<int,int> memo;// 0 ≤ xi ≤ 999999
 		// input
-		for(int teamID=0;teamID<N;teamID++){
+		for(int tID=0; tID<N; tID++){
 			scanf("%d",&teamsz);
-			for(int i=0;i<teamsz;i++){
+			while(teamsz-->0){
 				scanf("%d",&member);
-				memo[member]=teamID;
+				memo[member]=tID;
 			}
 		}
-		// 模擬
+		// 模擬 Queue in Queue
+		printf("Scenario #%d\n",caseI);
 		while(scanf("%s",ss) and ss[0]!='S'){
-			if(ss[0]=='E'){
+			// ENQUEUE
+			if(ss[0]=='E'){ 
 				scanf("%d",&member);
-				int team=memo[member];
-				if(InQ[team]==0){
-					teamQ.push(team);
-					InQ[team]=1;
+				int tID=memo[member];
+				if(InQ[tID]==0){
+					mainQ.push_back(tID);
+					InQ[tID]=1;
 				}
-				Q[team].push(member);
-			}else{
-				int team=teamQ.front();
-				printf("%d\n",Q[team].front());
-				Q[team].pop();
-				if(Q[team].empty()){
-					teamQ.pop();
-					InQ[team]=0;
+				teamQ[tID].push_back(member);
+			}else{ // DEQUEUE
+				int tID=mainQ.front();
+				printf("%d\n",teamQ[tID].front());
+				teamQ[tID].pop_front();
+				if(teamQ[tID].empty()){
+					mainQ.pop_front();
+					InQ[tID]=0;
 				}
 			}
 		}
+		putchar('\n');
 	}
 }
