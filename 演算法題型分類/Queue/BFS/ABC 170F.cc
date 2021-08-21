@@ -9,8 +9,8 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-const int INF=1<<30;
-const int MaxRC=1e3;
+const int MaxRC=1e6;
+const int INF=-1;
 int dx[4]={ 0, 1, 0,-1};
 int dy[4]={ 1, 0,-1, 0};
 
@@ -22,27 +22,25 @@ struct DATA{
 int main(){
 	int R, C, K;
 	while(scanf("%d %d %d\n",&R,&C,&K)!=EOF){
-		
+		scanf("%d %d %d %d\n",&st.x,&st.y,&ed.x,&ed.y);
+		st.x--, st.y--, ed.x--, ed.y--;
 		vector<vector<char>> mat(R, vector<char>(C));
 		for(int i=0;i<R;i++,getchar())
 			for(int j=0;j<C;j++)
 				mat[i][j]=getchar();
-		scanf("%d %d %d %d\n",&st.x,&st.y,&ed.x,&ed.y);
-		st.x--, st.y--, ed.x--, ed.y--;
 		
 		vector<vector<int>> step(R, vector<int>(C,INF));
-		queue<DATA> Q;
+		deque<DATA> Q;
 		Q.push(DATA(st.x,st.y));
 		step[st.x][st.y]=0;
-		while(Q.empty()==0){
+		while(Q.empty()==0 and step[ed.x][ed.y]==INF){
 			now=Q.front(); Q.pop();
-			if(now.x==ed.x and now.y==ed.y) break;
 			for(int i=0;i<4;i++)
 				for(int k=1;k<=K;k++){
 					nxt=DATA(now.x+k*dx[i],now.y+k*dy[i]);
 					if(nxt.x==-1 or nxt.x==R or nxt.y==-1 or nxt.y==C or mat[nxt.x][nxt.y]=='@' or step[nxt.x][nxt.y]<=step[now.x][now.y])
 						break;
-					if(step[nxt.x][nxt.y]>step[now.x][now.y]+1){
+					if(step[nxt.x][nxt.y]==INF){
 						step[nxt.x][nxt.y]=step[now.x][now.y]+1;
 						Q.push(nxt);
 					}

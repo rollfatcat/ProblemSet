@@ -8,37 +8,68 @@
  */
 #include<bits/stdc++.h>
 using namespace std;
-
-const int MaxSz=1000;
-char mapss[MaxSz][MaxSz];
-struct NODE{
-	int x, y, d, s;
-	NODE(int x=0,int y=0,int d=0,int s=0):x(x),y(y),d(d),s(s){}
-} now, st;
-
+ 
+const int MaxR=1e3;
+const int MaxC=1e3;
+const int INF=1<<30;
+char ss[MaxC+2];
+int  stp[MaxR][MaxC];
+int dx[4]={ 1,-1, 0, 0};
+int dy[4]={ 0, 0, 1,-1};
+ 
 int main(){
-	int caseT, R, C; 
-	scanf("%d\n",&caseT);
-	while(caseT--){
-		scanf("%d %d\n",&R,&C);
-		queue<NODE> Q;
-		for(int i=0;i<R;i++){
-			scanf("%s\n",mapss[i]);
-			for(int j=0;mapss[i][j]!='\0';j++)
-				     if(mapss[i][j]=='F') Q.push(NODE(i,j));
-				else if(mapss[i][j]=='J') st=NODE(i,j,0,1);
+	int caseT, R, C;
+ 
+	scanf("%d",&caseT);
+	while(caseT-->0){
+		deque<vector<int>> Q;
+		vector<int> S;
+		scanf("%d %d",&R,&C);
+		for(int r=0;r<R;r+=1){
+			scanf("%s",ss);
+			for(int c=0;c<C;c+=1){
+				switch(ss[c]){
+					case 'J':
+						S={r,c,0};
+					case '.':
+						stp[r][c]=INF;
+						break;
+					case 'F':
+						Q.push_back({r,c,1});
+					case '#':
+						stp[r][c]=-INF;
+				}
+			}
 		}
-		bool found=0;
-		for(Q.push(st);Q.empty()==0;Q.pop()){
-			now=Q.front();
-			if(mapss[now.x][now.y]=='#') continue;
-			if(now.s and (now.x==0 or now.x==R-1 or now.y==0 or now.y==C-1)){ printf("%d\n",now.d+1); found=1; break; }
-			mapss[now.x][now.y]='#';
-			if(now.x>0   and mapss[now.x-1][now.y]=='.') Q.push(NODE(now.x-1,now.y,now.d+1,now.s));
-			if(now.x+1<R and mapss[now.x+1][now.y]=='.') Q.push(NODE(now.x+1,now.y,now.d+1,now.s));
-			if(now.y>0   and mapss[now.x][now.y-1]=='.') Q.push(NODE(now.x,now.y-1,now.d+1,now.s));
-			if(now.y+1<C and mapss[now.x][now.y+1]=='.') Q.push(NODE(now.x,now.y+1,now.d+1,now.s));
+		// "火焰"展開的順序先於"人"，所以"人"存入 Queue 時必須慢於"火焰" ... 先紀錄後存入 
+		Q.push_back(S);
+		stp[S[0]][S[1]]=0;
+		bool escape=false;
+		while(Q.empty()==0 and escape==0){
+			vector<int> now=Q.front(); 
+			Q.pop_front();
+			for(int i=0;i<4;i+=1){
+				vector<int> nxt=now;
+				nxt[0]+=dx[i]; 
+				nxt[1]+=dy[i];
+				if(nxt[2]){ 
+					if(nxt[0]==-1 or nxt[0]==R or nxt[1]==-1 or nxt[1]==C or stp[nxt[0]][nxt[1]]<=0 )
+						continue;
+					stp[nxt[0]][nxt[1]]=-stp[nxt[0]][nxt[1]];
+				}else{
+					if(nxt[0]==-1 or nxt[0]==R or nxt[1]==-1 or nxt[1]==C){
+						escape=true;
+						printf("%d\n",abs(stp[now[0]][now[1]])+1);
+						break;
+					}
+					if(stp[nxt[0]][nxt[1]]<INF)
+						continue;
+					stp[nxt[0]][nxt[1]]=abs(stp[now[0]][now[1]])+1;
+				}
+				Q.push_back(nxt);
+			}
 		}
-		if(found==0) puts("IMPOSSIBLE");
+		if(escape==false)
+			puts("IMPOSSIBLE");
 	}
 }

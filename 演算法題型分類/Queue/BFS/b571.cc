@@ -1,47 +1,67 @@
-// 值得一做的BFS，解法簡單但不易想到
-/* 乍看之後會以為是複雜的BFS，得同時考慮時間和障礙物(陷阱會根據不同時間被視為障礙物)
- * 觀察後可以發現其實時間隨著不同陷阱變化可以切分成3種狀態，分別紀錄步數對應的不同陷阱的時間即可
+/* 給定Ｒ×Ｃ的地圖內容，３種陷阱(Ａ/Ｂ/Ｃ)會因為每走動一格而切換，輸出由Ｘ走到Ｙ的最短距離？
+ * 解題關鍵：最短距離＝BFS展開，狀態＝位置×哪種陷阱啟動
+ * 實作細節：狀態紀錄需要考慮到不同陷阱啟動時能否抵達，所以除了位置還要考慮是哪種類型的陷阱啟動
  */
 #include<bits/stdc++.h>
 using namespace std;
-#define maxN 1<<9
-
-char char_map[maxN][maxN]={};
-int time_map[3][maxN][maxN];
-struct nn{ int t, x, y; } st, ed, now, nxt;
+ 
+const int MaxR=5e2;
+const int MaxC=5e2;
+const int INF=1<<30;
+char trap[MaxR][MaxC];
+int step[MaxR][MaxC][3];
+ 
 int main(){
-  int R, C, move[4]={-1,1,0,0};
-  scanf("%d %d",&R,&C);
-  // time_map[t][x][y] 初始化給值-1
-  memset(time_map,0xff,sizeof(time_map));
-  // 讀取時為了避免判斷邊界存儲位置偏差(1,1)，邊界部分的字元改為'#'
-  for(int i=1;i<=R;i++){
-    scanf("%s",char_map[i]+1);
-    for(int j=1;j<=C;j++){
-      if(char_map[i][j]=='X') st.t=0, st.x=i, st.y=j;
-      if(char_map[i][j]=='Y') ed.t=-1, ed.x=i, ed.y=j;
-    }
-    char_map[i][0]=char_map[i][C+1]='#';
-  }
-  for(int j=1;j<=C;j++)
-    char_map[0][j]=char_map[R+1][j]='#';
-  // 以下是由【現在這點】去更新四周沒走過且不是邊界也不是障礙物的點
-  queue<nn> Q;
-  Q.push(st), time_map[st.t][st.x][st.y]=0;
-  while(!Q.empty()){
-    now=Q.front(), Q.pop();
-    if(now.x==ed.x and now.y==ed.y){
-      ed.t=time_map[now.t][now.x][now.y]; break;
-    }
-    nxt.t=(now.t+1)%3;
-    for(int i=0;i<4;i++){
-      nxt.x=now.x+move[i],
-      nxt.y=now.y+move[3-i];
-      if(char_map[nxt.x][nxt.y]!='#' and time_map[nxt.t][nxt.x][nxt.y]==-1 and nxt.t!=(char_map[nxt.x][nxt.y]-'A'))
-        time_map[nxt.t][nxt.x][nxt.y]=time_map[now.t][now.x][now.y]+1,
-        Q.push(nxt);
-    }
-  }
-  // 如果有找到，提早跳開前會紀錄ed.t，如果找不到ed.t就是初始值的-1
-  printf("%d\n",ed.t);
+	char ch;
+	int R, C;
+	deque< vector<int> >Q;
+ 
+	scanf("%d %d\n",&R,&C);
+	for(int r=0;r<R;r+=1,getchar())
+		for(int c=0;c<C;c+=1){
+			scanf("%c",&ch);
+			trap[r][c]=ch;
+			step[r][c][0]=(ch=='A' or ch=='#')? -1: INF;
+			step[r][c][1]=(ch=='B' or ch=='#')? -1: INF;
+			step[r][c][2]=(ch=='C' or ch=='#')? -1: INF;
+ 
+			if(ch=='X'){
+				Q.push_back( {r,c,1} );
+				step[r][c][0]=0;
+			}
+		}
+	int ans=-1;
+	while(Q.empty()==0){
+		vector<int> now=Q.front(); Q.pop_front();
+		int type=now[2]%3;
+		if(0<now[0] and step[now[0]-1][now[1]][ type ]==INF){
+			step[now[0]-1][now[1]][ type ]=now[2];
+			Q.push_back( {now[0]-1,now[1],now[2]+1} );
+			if(trap[now[0]-1][now[1]]=='Y'){
+				ans=now[2]; break;
+			}
+		}
+		if(now[0]+1<R and step[now[0]+1][now[1]][ type ]==INF){
+			step[now[0]+1][now[1]][ type ]=now[2];
+			Q.push_back( {now[0]+1,now[1],now[2]+1} );
+			if(trap[now[0]+1][now[1]]=='Y'){
+				ans=now[2]; break;
+			}
+		}
+		if(0<now[1] and step[now[0]][now[1]-1][ type ]==INF){
+			step[now[0]][now[1]-1][ type ]=now[2];
+			Q.push_back( {now[0],now[1]-1,now[2]+1} );
+			if(trap[now[0]][now[1]-1]=='Y'){
+				ans=now[2]; break;
+			}
+		}
+		if(now[1]+1<C and step[now[0]][now[1]+1][ type ]==INF){
+			step[now[0]][now[1]+1][ type ]=now[2];
+			Q.push_back( {now[0],now[1]+1,now[2]+1} );
+			if(trap[now[0]][now[1]+1]=='Y'){
+				ans=now[2]; break;
+			}
+		}
+	}
+	printf("%d\n",ans);
 }

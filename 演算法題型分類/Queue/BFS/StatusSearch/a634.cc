@@ -44,7 +44,7 @@ int main(){
 					cout<<"The shortest solution is "<<now.d<<" move(s)."<<'\n';
 				if(dis[ed.x][ed.y]==now.d)
 					cout<<"Solution: "<<now.ss<<'\n';
-        continue;
+        		continue;
 			}
 			if(now.d>dis[now.x][now.y]) continue;
 			dis[now.x][now.y]=now.d;
