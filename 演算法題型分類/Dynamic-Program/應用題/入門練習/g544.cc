@@ -6,29 +6,29 @@
  */
 #include<bits/stdc++.h>
 using namespace std;
- 
+
 const int MaxN=1e6;
-const int MaxK=1e3;
 const int MaxS=1e3;
+const int MaxK=1e3;
 int num[MaxN];
-int  dp[MaxK+1]={};
 int main(){
-	int N, K, v, maxdp;
+	int N, K;
+	
 	scanf("%d %d",&N,&K);
 	for(int i=0; i<N; i+=1)
 		scanf("%d",&num[i]);
-	for(int i=0; i<N; i+=1){
-		scanf("%d",&v);
-		// find the maximum, except dp[v]
-        maxdp=0;
-		for(int j=1;j<v;j+=1)
-			maxdp=max(maxdp,dp[j]);
-		for(int j=v+1;j<=K;j+=1)
-			maxdp=max(maxdp,dp[j]);
-		dp[v]=max(dp[v],maxdp+num[i]);
+	
+	int ans=0;
+	int nowK, preK=0;
+	int max_v=0;
+	for(int i=0;i<N;i+=1){
+		scanf("%d",&nowK);
+		if(preK!=nowK){
+			ans+=max_v;
+			preK=nowK;
+			max_v=num[i];
+		}else
+			max_v=max(max_v,num[i]);
 	}
-	maxdp=0;
-	for(int i=1;i<=K;i+=1)
-		maxdp=max(maxdp,dp[i]);
-	printf("%d\n",maxdp);
+	printf("%d\n",ans+max_v);
 }
