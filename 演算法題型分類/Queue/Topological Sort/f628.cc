@@ -1,7 +1,7 @@
 /* 給定Ｎ個村莊和Ｍ條村莊間路徑的危險度，最小化從村莊１為起點時到其他編號的村莊危險度總和？
  * 路徑為有向邊，危險度可能為負的且保證路徑不會組成負向環
- * 題目盲點：Dijkstra 無法處理負權重、BellamnFloyed 處理的是 All Pair Shortest Path
- * 		    SPFA( Shortest Path Faster Algorithm ) ... 最糟糕的情況會卡O(Ｎ*Ｍ)
+ * 題目盲點：Dijkstra 無法處理負權重、Floyed-Warshall 處理的是 All Pair Shortest Path
+ * 		   BellmanFord- SPFA( Shortest Path Faster Algorithm ) ... 最糟糕的情況會卡O(Ｎ*Ｍ)
  * 解題關鍵：Topological Sort
  */
 #include<bits/stdc++.h>
