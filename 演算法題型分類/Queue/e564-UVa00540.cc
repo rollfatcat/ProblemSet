@@ -11,25 +11,27 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-const int MaxN=1000; // N fot #Team
-const int MaxM=1000; // M for #member
+const int MaxN=1e3; // N fot #Team
+const int MaxM=1e3; // M for #member
+const int MaxX=1e6; // 0 ≤ xi ≤ 999999
+
+int memo[MaxX];
+bool InQ[MaxN+1];
+deque<int> teamQ[MaxN+1];
 int main(){
 	int N, teamsz, member;
 	char ss[10];
 	for(int caseI=1; scanf("%d",&N) and N>0; caseI++){	
-		deque<int> mainQ;
-		deque<int> teamQ[N];
-		vector<bool> InQ(N);
-
-		// 記憶體上限為 64 MB，無法使用 2e7 格陣列空間
-		map<int,int> memo;// 0 ≤ xi ≤ 999999
+		fill( InQ+1, InQ+1+N,0);
 		// input
-		for(int tID=0; tID<N; tID++){
+		teamQ[0].clear();
+		for(int tID=1; tID<=N; tID+=1){
 			scanf("%d",&teamsz);
 			while(teamsz-->0){
 				scanf("%d",&member);
 				memo[member]=tID;
 			}
+			teamQ[tID].clear();
 		}
 		// 模擬 Queue in Queue
 		printf("Scenario #%d\n",caseI);
@@ -39,16 +41,16 @@ int main(){
 				scanf("%d",&member);
 				int tID=memo[member];
 				if(InQ[tID]==0){
-					mainQ.push_back(tID);
+					teamQ[0].push_back(tID);
 					InQ[tID]=1;
 				}
 				teamQ[tID].push_back(member);
 			}else{ // DEQUEUE
-				int tID=mainQ.front();
+				int tID=teamQ[0].front();
 				printf("%d\n",teamQ[tID].front());
 				teamQ[tID].pop_front();
 				if(teamQ[tID].empty()){
-					mainQ.pop_front();
+					teamQ[0].pop_front();
 					InQ[tID]=0;
 				}
 			}

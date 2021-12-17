@@ -13,7 +13,7 @@
 #include<bits/stdc++.h>
 using namespace std;
  
-const int MaxV=1e7; // 0 ≤ xi ≤ 999999
+const int MaxV=1e6; // 0 ≤ xi ≤ 999999
 const int MaxN=1e3;
 const int MaxQ=2e5;
 
