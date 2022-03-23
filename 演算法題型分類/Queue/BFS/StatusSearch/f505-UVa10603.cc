@@ -69,7 +69,7 @@ int main(){
 			nxt={now.v[0],now.v[1]-dv,now.v[2]+dv,now.d+dv};
 			if(memo[nxt.v[0]][nxt.v[1]]>nxt.d)
 				Q.push(nxt);
-            /* Ｂ -> Ｃ */
+            /* Ｃ -> Ｂ */
 			dv=min(now.v[2],bound.v[1]-now.v[1]);
 			nxt={now.v[0],now.v[1]+dv,now.v[2]-dv,now.d+dv};
 			if(memo[nxt.v[0]][nxt.v[1]]>nxt.d)
