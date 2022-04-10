@@ -1,78 +1,66 @@
+/* 給定Ｎ個票箱內２位後選人的選票，從中挑選Ｍ個，問最大化２位候選人的得票率(最簡分數表示)
+ * 解題關鍵：得票率 = 平均值
+ */
 #include<bits/stdc++.h>
 using namespace std;
 
 const int MaxN=1e5;
-const int MaxT=1e4;
-const double ESP=1e-9;
+const double ESP=1e-6; 
 
-int N, M;
-bool ans[MaxN];
-bool pck[MaxN];
-int data[MaxN][2];
-int  ord[MaxN];
+int N, K;
+int w[MaxN];
+int v[MaxN];
+int o[MaxN];
 double t[MaxN];
 
-bool compareX(int a,int b){ return t[a]>t[b]; }
-bool compareY(int a,int b){ return t[a]<t[b]; }
-bool check(double G,bool type){
-	for(int i=0; i<N; i+=1){
-		t[i]=data[i][0]-G*(data[i][0]+data[i][1]);
-		ord[i]=i;
-		pck[i]=0;
-	}
-	sort(ord,ord+N,(type)? compareX: compareY);
+bool compare(int lhs,int rhs){ return t[lhs]<t[rhs]; }
+void show(int A,int B){
+	if(A==0){ cout<<0<<'\n'; return; }
+	if(A==B){ cout<<1<<'\n'; return; }
+	int g=__gcd(A,B);
+	cout<<(A/g)<<'/'<<(B/g)<<'\n';
+}
+bool judge(double nM,bool print){
+	for(int n=0; n<N; n++)
+		t[n]=v[n]-w[n]*nM;
+	iota(o,o+N,0);
+	sort(o,o+N,compare);
 	double sum=0.0;
-	for(int i=0; i<M; i+=1){
-		sum+=t[ord[i]];
-		pck[ord[i]]=1;
+	int get=0;
+	int all=0;
+	for(int k=0; k<K; k++){
+		sum+= t[o[k]];
+		get+= v[o[k]];
+		all+= w[o[k]];
 	}
-	return sum>=0.0;
+	if(print)
+		show(all-get,all);
+	return sum<0.0;
 }
-void output(bool type){
-	int ansX=0;
-	int ansY=0;
-	for(int i=0; i<N; i+=1)
-		if( ans[i] ){
-			ansX+=data[i][0];
-			ansY+=data[i][1];
-		}
-	if(ansX==0){ puts("0"); return; }
-	if(ansY==0){ puts("1"); return; }
-	// 約分
-	int gcd=__gcd(ansX,ansY);
-	ansX/=gcd; 
-	ansY/=gcd;
-	printf("%d/%d\n",(type)? ansX: ansY,ansX+ansY);
-}
-int main(){
-	scanf("%d %d",&N,&M);
-	for(int i=0; i<N; i+=1)
-		scanf("%d %d",&data[i][0],&data[i][1]);
-
+void solve(){
 	double nL=0.0;
 	double nR=1.0;
-	while(nR-nL>=ESP){
+	double ans;
+	while(nL+ESP<=nR){
 		double nM=(nL+nR)/2.0;
-		if( check(nM,1) ){
-			for(int i=0; i<N; i+=1)
-				ans[i]=pck[i];
-			nL=nM+ESP;
+		if( judge(nM,0) ){
+			ans=nM;
+			nR=nM-ESP;
 		}else
-			nR=nM-ESP;
-	}
-	output(1);
-	
-	nL=0.0;
-	nR=1.0;
-	while(nR-nL>=ESP){
-		double nM=(nL+nR)/2.0;
-		if( check(nM,0) ){
 			nL=nM+ESP;
-		}else{
-			for(int i=0; i<N; i+=1)
-				ans[i]=pck[i];
-			nR=nM-ESP;
-		}
 	}
-	output(0);
+	judge(ans,1);
+}
+int main(){
+	
+	cin>>N>>K;
+	for(int n=0; n<N; n++){
+		cin>>v[n]>>w[n];
+		v[n]+=w[n];
+		swap(v[n],w[n]);
+	}
+	solve(); // maximize {X}
+	for(int n=0; n<N; n++)
+		v[n]=w[n]-v[n];
+	solve(); // maximize {Ｙ}
 }
