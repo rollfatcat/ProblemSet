@@ -33,10 +33,7 @@ int main(){
         dpn[i]=min(dpn[i],pow2(nowv)+dpn[j-1]);
       }
     }
-    if(sum_money>=dpn[N])
-      printf("%d\n",sum_money-dpn[N]);
-    else
-      puts("QQ");
+    (sum_money>=dpn[N])? printf("%d\n",sum_money-dpn[N]): puts("QQ");
   }
 }
 /*

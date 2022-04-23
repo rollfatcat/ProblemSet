@@ -5,20 +5,28 @@
  */
 #include<bits/stdc++.h>
 using namespace std;
-const int MaxN=1e4;
-const int MaxD=3e3;
 
+const int MaxT=3e3;
+const int MaxN=1e4;
+const int MaxP=1e8;
+
+int pos[MaxN]; // sorted
 int main(){
-	int D, N, cnt=1;
-	scanf("%d %d\n",&D,&N);
-	int pivot=D;
-	int cut[2]={};
-	scanf("%d",&cut[0]);
-	for(bool now=1; --N>0; now^=1){
-		scanf("%d",&cut[now]);
-		if(cut[now]>pivot)
-			pivot=cut[now^1]+D,
-			cnt++;
+	int T, N, P;
+	
+	while(cin>>T>>N){
+		for(int n=0; n<N; n+=1)
+			cin>>pos[n];
+		int ans=0;
+		int pre=0;
+		for(int n=0; n<N; ){
+			if(pos[n]-pre<=T){
+				n+=1;
+			}else{
+				pre=pos[n-1];
+				ans+=1;
+			}
+		}
+		cout<<ans+1<<'\n';
 	}
-	printf("%d\n",cnt);
 }

@@ -1,4 +1,3 @@
-// 類似於CH024指南宮的階梯題『費波那契』變形
 /* 題目要求每次可以跨一階或是三階 => F(n)=F(n-1)+F(n-3) => Ｎ不大，Linear Bottom-Up
  * 但是必須到達指定的休息站 => 根據指定位置，分區段找出方法數後累乘
  */
@@ -15,10 +14,11 @@ int main(){
   scanf("%d %d",&N,&M);
   int now, pre=0;
   long way=1;
-  for(int i=0;i<M;i++)
-    scanf("%d",&now),
-    way=way*DP[now-pre]%MOD,
+  for(int i=0;i<M;i++){
+    scanf("%d",&now);
+    way=way*DP[now-pre]%MOD;
     pre=now;
+  }
   way=way*DP[N-pre]%MOD;
   printf("%ld\n",way);
 }

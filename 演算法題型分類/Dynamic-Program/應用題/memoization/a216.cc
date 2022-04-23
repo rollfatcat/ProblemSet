@@ -1,5 +1,4 @@
 /* 給定兩個數列的狀態轉移，輸出兩個數列中第Ｎ項的數值
- * F(Ｎ)
  */
 #include <bits/stdc++.h>
 using namespace std;

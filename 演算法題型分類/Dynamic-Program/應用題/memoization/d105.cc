@@ -1,5 +1,5 @@
-// 直接Bottom-Up 推展到m次即可, 注意環狀的順序
-// 可以說明LinkList的概念
+/* 直接Bottom-Up 推展到m次即可, 注意環狀的順序
+ */
 #include<iostream>
 #include<cstring>
 using namespace std;

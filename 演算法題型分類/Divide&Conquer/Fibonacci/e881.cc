@@ -45,7 +45,3 @@ int main(){
 		printf("%09d",memo[N][i]);
 	putchar('\n');
 }
-/* === input 2 ===
-   8 2 
-   1 5
- */
