@@ -1,6 +1,5 @@
 // 有限背包的『方法數』問題
-#include<iostream>
-#include<cstring>
+#include<bits/stdc++.h>
 using namespace std;
 #define MaxN 100
 

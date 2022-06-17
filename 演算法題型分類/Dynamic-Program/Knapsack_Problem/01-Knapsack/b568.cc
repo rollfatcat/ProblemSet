@@ -1,32 +1,23 @@
-// 很有趣的難題，不知道為何不能用set來寫會 RE(SIGSEGV)
-// 01背包問題，但是注意 overflow 導致的更新方式會完全不同
-// 解法出處：https://www.ptt.cc/bbs/C_and_CPP/M.1536758808.A.996.html
-#include<iostream>
+#include<bits/stdc++.h>
 using namespace std;
-#define MaxL 700000
 
+const int MaxN=1e2;
+const int MaxA=7e5+1;
+bool on[2][MaxA]={{1}};
 int main(){
-  ios::sync_with_stdio(0),
-  cin.tie(0), cout.tie(0);
-
-  int w, cnt, i, j;
-  char DP[MaxL+1]={0}; // 記錄這個位置是在第i次時被更新的
-
-  for(cin>>cnt, i=1; i<=cnt; i++)
-    for(cin>>w, j=1; j<=MaxL; j++){ //順向更新，確保overflow時也可以更新
-      if(DP[j] and DP[j]!=i){
-        int updatePos=(j+w-1)%MaxL+1;
-        if(!DP[updatePos])
-          DP[updatePos]=i;
-      }else if(j==w)
-        DP[j]=i;
-    }
-  for(i=MaxL;!DP[i];i--);
-  cout<<i<<endl;
+	int N, A;
+	bool now=0, pre=1;
+	
+	scanf("%d",&N);
+	for(int n=0; n<N; n++){
+		scanf("%d",&A);
+		swap(pre,now);
+    // 這邊容易以為取模
+		for(int v=0; v<A; v++)
+			on[now][v]=on[pre][v]|on[pre][v-A+MaxA-1];
+		for(int v=A; v<MaxA; v++)
+			on[now][v]=on[pre][v]|on[pre][v-A];
+	}
+	for(A=MaxA-1; on[now][A]==0; A--);
+	printf("%d",A);
 }
-/*
-3
-699999 2 699999
------------------
-700000
-*/
