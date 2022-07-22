@@ -1,50 +1,54 @@
-// 將線段樹處理的RMQ問題(且必須支援區間修改)轉成BIT處理方式
-/* 模板詳解：http://kenby.iteye.com/blog/962159
- * sum[x]=segma(org[i])+(x+1)*segma(delta[i])-segma(delta[i]*i)，1<=i<=x
- * 維護三個前綴和：org[i]/delta[i]/delta[i]*i
+// 將線段樹處理的RMQ問題(支援區間修改)轉成BIT處理方式
+/* 模板詳解：https://www.cnblogs.com/dilthey/p/9366491.html#c
+ * 引入「差分」的概念：
+ * sum[x]=segma(org[i])+(x+1)*segma(delta[i])-segma(delta[i]*i)，1 ≤ i ≤ x
+ * 維護三個前綴和：org[i]/ delta[i]/ delta[i]*i
  */
-#include<iostream>
+#include<bits/stdc++.h>
 using namespace std;
-#define MaxN 500001
 
-long N;
-// 設delta[i]表示[i,n]的共同增量
-long sum[MaxN]={0};//
-long c1[MaxN]; // 維護delta[i] 的前缀和
-long c2[MaxN]; // 維護delta[i]*i 的前缀和
-inline void scanLong(long &x){char c;for(x=0;(c=getchar())>='0' and c<='9';x=(x<<3)+(x<<1)+c-'0');}
-long query(long *arr, int st){
-  long tmp=0;
-  for(;st>0; st-=(st&-st) )
-    tmp+=arr[st];
-  return tmp;
+const int MaxN=5e5;
+const int MaxQ=5e5;
+const int MaxV=32767;
+const int MaxK=1e3;
+
+int N, Q, o, L, R, K;
+long prS[MaxN+2]={};
+long  di[MaxN+2]={};
+long dii[MaxN+2]={};
+
+int lowbit(int x){ return x&-x; }
+void Update(long BIT[],int p,long v){
+	for(; p<=N; p+=lowbit(p))
+		BIT[p]+=v;
 }
-void update(long *arr,int st,int add){
-  for(; st<=N; st+=(st&-st))
-    arr[st]+=add;
+long Query(long BIT[],int p,long ret=0){
+	for(; 0<p; p-=lowbit(p))
+		ret+= BIT[p];
+	return ret;
 }
+
 int main(){
-  long M, v, x, y, k;
-
-  scanLong(N);
-  for(int i=1;i<=N;i++)
-    scanLong(sum[i]), sum[i]+=sum[i-1];
-  for(scanLong(M); M--; ){
-    scanLong(v),
-    scanLong(x),
-    scanLong(y);
-    if(v==2){
-      long ans=sum[y]-sum[x-1];
-      ans+=((y+1)*query(c1,y)-query(c2,y));
-      ans-=(x*query(c1,x-1)-query(c2,x-1));
-      cout<<ans<<endl;
-    } else {
-      // 把delta[i](s<=i<=t)加d，策略是先把[s,n]内的增量加d，再把[t+1,n]的增量减d
-      scanLong(k);
-      update(c1,  x, k);
-      update(c1,y+1,-k);
-      update(c2,  x,k*x);
-      update(c2,y+1,-k*(y+1));
-    }
-  }
+	scanf("%d",&N);
+	for(int n=1; n<=N; n++){
+		scanf("%ld",&prS[n]);
+		prS[n]+=prS[n-1];
+	}
+	scanf("%d",&Q);
+	while(Q-->0){
+		scanf("%d %d %d",&o,&L,&R);
+		if( o==1 ){ // Update
+			scanf("%d",&K);
+			Update( di,  L, K);
+			Update(dii,  L, K*L);
+			Update( di,R+1,-K);
+			Update(dii,R+1,-K*(R+1));
+		}else{ // Query
+			long ans=prS[R]-prS[L-1];
+			//long ans=0;
+			ans+=(R+1)*Query(di, R )-Query(dii, R );
+			ans-=    L*Query(di,L-1)-Query(dii,L-1);
+			printf("%ld\n",ans);
+		}
+	}
 }
