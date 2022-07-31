@@ -1,27 +1,27 @@
 /* 原題目來自於：BZOJ-3262 陌上花开，但這題的要求是嚴格遞減(不可相等...)
- * (X)排序的第一維度後，第二第三維度用樹狀數組維護 => 10^6Ｘ10^6的陣列空間過大無法負荷
+ * (X) 排序的第一維度後，第二第三維度用樹狀數組維護 => 1e5 * 1e5的陣列空間過大無法負荷
  * (O) 第一個維度用 CountSort 處理，第二維度透過分治法處理，第三維度是樹狀數組維護
  *     和 BZOJ-3262 比較：會把排序後的結果合併回去，但這題的話則不會確保第一第二維度的遞增
  */
 #include<bits/stdc++.h>
 using namespace std;
 
-const int MAXN=100001;
+const int MaxN=1e5;
 struct NODE{
   int y,z,o;
   NODE(int a=0,int b=0,int c=0):o(a),y(b),z(c){}
   bool operator<(const NODE &rhs)const{ return y<rhs.y; }
 };
-vector<NODE> bucket[MAXN];
-int ans[MAXN];
+vector<NODE> bucket[MaxN+1];
+int ans[MaxN+1];
 
 class BIT{ // 以class形式封裝
   private:
-    int arr[MAXN];
+    int arr[MaxN+1];
     inline int lowbit(int x){ return x&-x; }
   public:
     void update(int x,int v){
-      for(;x<=MAXN;x+=lowbit(x))
+      for(;x<=MaxN;x+=lowbit(x))
         arr[x]+=v;
     }
     int query(int x,int v=0){

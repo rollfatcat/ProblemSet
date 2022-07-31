@@ -1,13 +1,13 @@
-/* 第i位的答案就是在未選的數中第Si小的 => 如何確定未選的數中第k小的數是多少
- * 用樹狀數组，维護數字i之前有多少个數被取走了。該操作屬於單點修改＋區間查詢。
- * 這樣如果 i-BIT[i]>=k，那麼 i 這個位置就是可選的。
- * 用二分法找滿足條件的最小的i
+/* 第ｉ位的答案就是在未選的數中第 Ki 小的 => 如何確定未選的數中第Ｋ小的數
+ * 用樹狀數组，维護數字i之前有多少个數被取走了。該操作屬於單點修改 + 區間查詢。
+ * 這樣如果 i-BIT[i]>=k，那麼ｉ這個位置就是可選的。
+ * 用二分法找滿足條件的最小的ｉ
  */
 #include<bits/stdc++.h>
 using namespace std;
 
-const int MAXN=5e4+1;
-short BIT[MAXN]={};
+const int MaxN=5e4+1;
+short BIT[MaxN]={};
 
 inline void scanInt(int &x){char c;for(x=0;(c=getchar())>='0' and c<='9';x=(x<<3)+(x<<1)+c-'0');}
 inline int lowbit(int x){ return -x&x; }

@@ -1,8 +1,7 @@
-// 題目要求『嚴格遞增』子序列(不一定連續)，動態規劃的遞增子序列問題
-// 在動態規劃裡面的做法是 DP[i]=max( DP[j] )+num[i] ,if(j<i and num[i]>num[j])，O(n^2)
-// 這題的時間需求要降低到O(n㏒n)，做法類似a596的BIT＋離散化
-// BIT＋離散化:http://mypaper.pchome.com.tw/zerojudge/post/1323423828
-/* 利用 BIT 查詢比目前數值還要小的 DP[idx] 中數值最大者
+/* 題目要求『嚴格遞增』子序列(不一定連續)，動態規劃的遞增子序列問題
+ * 在動態規劃裡面的做法是 DP[i]=max( DP[j] )+num[i] ,if(j<i and num[i]>num[j])，O(n^2)
+ * 這題的時間需求要降低到O(n㏒n)，做法類似a596的BIT＋離散化
+ * 利用 BIT 查詢比目前數值還要小的 DP[idx] 中數值最大者
  * 原本動態規劃的 DP[idx] idx是指輸入的順序，但是這個版本的 idx 代表的是離散化後的數值順序
  */
 #include<bits/stdc++.h>
@@ -43,9 +42,3 @@ int main(){
     printf("%ld\n",best);
   }
 }
-/*
-6
-14 14 9 11 1 19
-5
-16 9 10 13 17
-*/

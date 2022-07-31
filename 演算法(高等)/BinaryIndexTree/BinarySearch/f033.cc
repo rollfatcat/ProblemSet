@@ -1,3 +1,10 @@
+/* 給定Ｎ天的薪資(不低於０)和Ｑ次的操作並輸出對應的答案
+ * 操作(1) 1 p c：第ｐ天的薪資修改為ｃ 
+ * 操作(2) 2 K  ：從第１天開始至少需要工作多少天獲得的薪資能 ≥ 查詢值Ｋ
+ * 解題關鍵： BIT 
+ * 		操作(1) 屬於單點更新
+ * 		操作(2) 屬於區間查詢，利用二分法檢測目前薪資總合 ≥ 查詢值Ｋ
+ */
 #include<bits/stdc++.h>
 using namespace std;
 
@@ -14,12 +21,6 @@ int Qry(int p,int ret=0){
 		ret+=BIT[p];
 	return ret;
 }
-/*
-void Upd(int p,int v){
-	for(; p<=N; p+=lowbit(p))
-		BIT[p]+=v;
-}
-*/
 int main(){
 	int N, Q, o, p, v, k;
 	

@@ -1,6 +1,5 @@
-// 題解：https://blog.yangjerry.tw/2018/09/02/zj-c651/
-// 需要支持(1)區間查詢和(2)單點修改+lazy修改 => SegmentTree(72%)
-// 注意：這一題的運算元是XOR，所以Query可以優化到O(1) => BinaryIndexTree
+/*
+ */
 
 #include<bits/stdc++.h>
 using namespace std;

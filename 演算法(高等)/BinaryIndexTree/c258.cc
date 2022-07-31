@@ -13,23 +13,22 @@
  */
 #include<bits/stdc++.h>
 using namespace std;
-#define MAXN 500002
-#define lowbit(x) (-x&x)
 
-int BITR[MAXN]={};
-int sR[MAXN], NumR;
+const int MaxN=500002;
+int BITR[MaxN]={};
+int sR[MaxN], NumR;
 struct CIRCLE{
   int sL, sR;
   CIRCLE(int a=0,int b=0):sL(a),sR(b){}
   bool operator<(const CIRCLE &rhs)const{ return sL<rhs.sL; }
-}sC[MAXN];
+}sC[MaxN];
 
 inline void update(int st,int BIT[],int BITN){
-  for(int pos=st;pos<BITN;pos+=lowbit(pos))
+  for(int pos=st; pos<BITN; pos+=lowbit(pos))
     BIT[pos]++;
 }
 inline int query(int st,int BIT[],int ret=0){
-  for(int pos=st;pos;pos-=lowbit(pos))
+  for(int pos=st; 0<pos; pos-=lowbit(pos))
     ret+=BIT[pos];
   return ret;
 }
@@ -80,15 +79,3 @@ int main(){
   }
   printf("%ld\n",cnt);
 }
-/*
-4
-9 6
-8 2
-1 4
-5 4
-
-3
-5 3
-5 3
-4 1
-*/
