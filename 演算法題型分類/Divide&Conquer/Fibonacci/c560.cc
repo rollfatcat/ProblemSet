@@ -1,5 +1,5 @@
-/* 題目要求每次可以跨一階或是三階 => F(n)=F(n-1)+F(n-3) => Ｎ不大，Linear Bottom-Up
- * 但是必須到達指定的休息站 => 根據指定位置，分區段找出方法數後累乘
+/* 題目要求每次可以跨一階或是三階 → F(n)=F(n-1)+F(n-3) → Ｎ不大，Linear Bottom-Up
+ * 但是必須到達指定的休息站 → 根據指定位置，分區段找出方法數後累乘
  */
 #include<bits/stdc++.h>
 using namespace std;
