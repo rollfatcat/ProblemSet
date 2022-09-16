@@ -7,39 +7,32 @@
  */
 #include<bits/stdc++.h>
 using namespace std;
-#define MAXN 1001
 
-int org[MAXN]; // 原始數據
-int sum[MAXN]; // sum[i]：代表從org[1]+...org[i]的最大區間和
+const int MaxN=1e3;
+const int MaxP=1e4;
+int num[MaxN+1];
+int prS[MaxN+1];
+int mnv[MaxN+1];
 int main(){
-  int N;
-  while(scanf("%d",&N) and N){
-    memset(sum,0,sizeof(sum));
-    int ans_sum=-(1<<30);
-    int continuous_sum=0;
-    int from_start_sum=0;
-
-    for(int i=1;i<=N;i++){
-      scanf("%d",&org[i]);
-      from_start_sum+=org[i];
-      sum[i]=max(from_start_sum,sum[i-1]);
-      continuous_sum=(continuous_sum<0)? org[i]: (org[i]+continuous_sum);
-      ans_sum=max(ans_sum,continuous_sum);
-    }
-    int from_end_sum=0;
-    for(int i=N;i>=1;i--)
-      from_end_sum+=org[i],
-      ans_sum=max(ans_sum,from_end_sum+sum[i-1]);
-    printf("%d\n",ans_sum);
-  }
+	int N;
+	while( cin>>N and N>0 ){
+		// input
+		for(int n=1; n<=N; n++)
+			cin>>num[n];
+		// maximum subarray
+		int ans=num[1];
+		int minv=0;
+		for(int n=1; n<=N; n++){
+			prS[n]=prS[n-1]+num[n];
+			ans=max(ans,prS[n]-minv);
+			minv=min(minv,prS[n]);
+		}
+		// circular = left + right
+		mnv[N]=prS[N];
+		for(int n=N-1; 0<=n; n--)
+			mnv[n]=min(mnv[n+1],prS[n]);
+		for(int n=1; n<=N; n++)
+			ans=max(ans,prS[n]+prS[N]-mnv[n]);
+		cout<<ans<<'\n';
+	}
 }
-
-/*
-5
-1 2 -4 4 -5
-5
-1 2 -1 4 -5
-5
-1 2 -4 4 5
-0
-*/

@@ -1,37 +1,39 @@
-// 類似d206，目標是改為輸出區域內最小的區域
+/* 給定邊長為Ｎ的矩陣，輸出矩形範圍內最小的子區域總和(至少選一個數字)？
+ * 解題核心：column squash
+ */
 #include<bits/stdc++.h>
 using namespace std;
-const int MaxN=101;
 
+const int MaxN=1e2;
+int num[MaxN+1][MaxN+1];
+int prS[MaxN+1][MaxN+1]={};
+int v[MaxN+1]={};
 int main(){
-  int n, N, minNum;
-  int num[MaxN][MaxN];
-  int rowSum[MaxN][MaxN]={0};
-
-  ios::sync_with_stdio(0),
-  cin.tie(0), cout.tie(0);
-  while(cin>>n){
-    for(int i=1;i<=n;i++)
-      for(int j=1;j<=n;j++)
-        cin>>num[i][j], rowSum[i][j]=rowSum[i-1][j]+num[i][j];
-    minNum=0x7fffffff;
-    for(int i=0;i<n;i++)
-      for(int j=i+1;j<=n;j++){
-        int sum=0;
-        //窮舉所有第i列到第j列的所有可能性
-        for(int k=1; k<=n ;k++){
-          if(sum>0) sum=0;
-          sum+=rowSum[j][k]-rowSum[i][k];
-          if(minNum>sum) minNum=sum;
-        }
-      }
-    cout<<minNum<<endl;
-  }
+	int N;
+	while( cin>>N ){
+		// input
+		for(int r=1; r<=N; r++)
+			for(int c=1; c<=N; c++)
+				cin>>num[r][c];
+		// prefix-sum for each row
+		for(int r=1; r<=N; r++)
+			for(int c=1; c<=N; c++)
+				prS[r][c]=prS[r][c-1]+num[r][c];
+		// brute-force
+		int ans=num[1][1];
+		for(int Lc=1; Lc<=N; Lc++)
+			for(int Rc=Lc; Rc<=N; Rc++){
+				// 代表每一個 row 的 Lc:Rc 之間數字壓縮成一個
+				for(int r=1; r<=N; r++)
+					v[r]=prS[r][Rc]-prS[r][Lc-1];
+				int maxv=0;
+				int prSv=0;
+				for(int r=1; r<=N; r++){
+					prSv+=v[r];
+					ans=min(ans,prSv-maxv);
+					maxv=max(maxv,prSv);
+				}
+			}
+		cout<<ans<<'\n';
+	}
 }
-/*
-4
-0 -2 -7 0
-9 2 -6 2
--4 1 -4 1
--1 8 0 -2
-*/
