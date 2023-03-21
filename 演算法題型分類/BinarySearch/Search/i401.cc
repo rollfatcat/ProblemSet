@@ -4,73 +4,102 @@
  */
 #include<bits/stdc++.h>
 using namespace std;
- 
+
 const int MaxN=25e4;
-const int MaxP=3e4;
- 
-struct MIRROR{ 
-	int p, t;
-	MIRROR(int p=0,int t=-1):p(p),t(t){}
-	bool operator<(const MIRROR rhs)const{ 
-		return p<rhs.p; }
-};
-vector<MIRROR> mx[30001];
-vector<MIRROR> my[60001];
-int x, y, d, p;
-bool light(){
-	switch(d){ // { R, D, L, U }
-		case 0:
-			if( my[y].empty() or x==my[y].back().p ) 
-				return false;
-			p=upper_bound(my[y].begin(),my[y].end(),MIRROR(x))-my[y].begin();
-			d=( my[y][p].t )? 1: 3;
-			x=my[y][p].p;
-			return true;
- 
-		case 1:
-			if( mx[x].empty() or y==mx[x][0].p ) 
-				return false;
-			p=lower_bound(mx[x].begin(),mx[x].end(),MIRROR(y))-mx[x].begin()-1;
-			d=( mx[x][p].t )? 0: 2;
-			y=mx[x][p].p;
-			return true;
- 
-		case 2:
-			if( my[y].empty() or x==my[y][0].p ) 
-				return false;
-			p=lower_bound(my[y].begin(),my[y].end(),MIRROR(x))-my[y].begin()-1;
-			d=( my[y][p].t )? 3: 1;
-			x=my[y][p].p;
-			return true;
- 
-		case 3:
-			if( mx[x].empty() or y==mx[x].back().p ) 
-				return false;
-			p=upper_bound(mx[x].begin(),mx[x].end(),MIRROR(y))-mx[x].begin();
-			d=( mx[x][p].t )? 2: 0;
-			y=mx[x][p].p;
-			return true;
+const int MaxX=3e4;
+const int MaxY=6e4;
+
+struct NODE{ 
+	int p, t; 
+	NODE(int p=0,int t=0):p(p),t(t){}
+} ret;
+vector<NODE> mx[MaxX+1];
+vector<NODE> my[MaxY+1];
+
+bool comp(NODE lhs,NODE rhs){ return lhs.p<rhs.p; }
+// pass by reference : avoid to copy one
+NODE upper_bound(int v,vector<NODE>& pool){ // find the mirror, who's position > v
+	if( pool.empty() or pool.back().p<=v ) 
+		return NODE(0,-1);
+	int L=0;
+	int R=pool.size()-1;
+	int ans=-1;
+	while( L<=R ){
+		int M=L+R>>1;
+		if( v<pool[M].p ){
+			ans=M;
+			R=M-1;
+		}else
+			L=M+1;
 	}
-	return false;
+	return (ans==-1)? NODE(0,-1): pool[ans];
 }
-int main(){
-	int N, t;
-	scanf("%d",&N);
-	for(int n=0; n<N; n++){
-		scanf("%d %d %d",&x,&y,&t); y+=MaxP;
-		mx[x].push_back( MIRROR(y,t) );
-		my[y].push_back( MIRROR(x,t) );
+NODE lower_bound(int v,vector<NODE>& pool){ // find the mirror, who's position < v
+	if( pool.empty() or v<=pool[0].p ) 
+		return NODE(0,-1);
+	int L=0;
+	int R=pool.size()-1;
+	int ans=-1;
+	while( L<=R ){
+		int M=L+R>>1;
+		if( pool[M].p<v ){
+			ans=M;
+			L=M+1;
+		}else
+			R=M-1;
 	}
-    // sort for binary_search
-	for(x=0; x<=MaxP; x++)
-		sort(mx[x].begin(),mx[x].end());
-	for(y=0; y<=MaxP<<1; y++)
-		sort(my[y].begin(),my[y].end());
-	// init setting
-    int ans=0;
-	x=d=0;
-	y=MaxP;
-	while( light() )
-		ans++;
-	printf("%d",ans);
+	return (ans==-1)? NODE(0,-1): pool[ans];
+}
+
+
+int main(){
+	int N, x, y, t;
+	
+	cin>>N;
+	while( N-->0 ){
+		cin>>x>>y>>t; 
+		y+=30000; // offset ->  0 <= y <=6e4
+		mx[x].push_back( NODE(y,t) );
+		my[y].push_back( NODE(x,t) );
+	}
+	for(int x=1; x<=MaxX; x++)
+		sort( mx[x].begin(), mx[x].end(), comp );
+	for(int y=0; y<=MaxY; y++)
+		sort( my[y].begin(), my[y].end(), comp );
+	
+	// init status
+	int S_x=0;
+	int S_y=30000;
+	int S_d=0; // { R=0, D=1, L=2, U=3 }
+	for(int cnt=0; true; cnt+=1){
+		switch( S_d ){
+			case 0:
+				ret=upper_bound(S_x, my[S_y]);	
+				if( ret.t==-1 ){ // 找不到時回傳的鏡子類型為 -1
+					cout<<cnt; return 0; }
+				S_x= ret.p;
+				S_d= ret.t==0? 3: 1;
+				break;
+			case 1:
+				ret=lower_bound(S_y, mx[S_x]);	
+				if( ret.t==-1 ){ // 找不到時回傳的鏡子類型
+					cout<<cnt; return 0; }
+				S_y= ret.p;
+				S_d= ret.t==0? 2: 0;
+				break;
+			case 2:
+				ret=lower_bound(S_x, my[S_y]);	
+				if( ret.t==-1 ){ // 找不到時回傳的鏡子類型
+					cout<<cnt; return 0; }
+				S_x= ret.p;
+				S_d= ret.t==0? 1: 3;
+				break;
+			case 3:
+				ret=upper_bound(S_y, mx[S_x]);	
+				if( ret.t==-1 ){ // 找不到時回傳的鏡子類型
+					cout<<cnt; return 0; }
+				S_y= ret.p;
+				S_d= ret.t==0? 0: 2;
+		}
+	}
 }
